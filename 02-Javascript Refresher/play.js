@@ -24,7 +24,7 @@ const summerizeUser1 = (name, age, hasHobbies) => {};
 
 // const add = (a,b) => a+b;
 // const addOne =  a => a + 3;
-const addOne =  a => a + 3;
+const addRandom =  () => 1 + 3;
 console.log(addRandom(5));
 // console.log(addOne(5));
 // console.log(add(5,6));
