@@ -21,3 +21,13 @@ setTimeout(() => {
 
 console.log("Hello!");
 console.log("Hi!");
+
+
+//Output:
+/*
+Hello!
+Hi!
+Timer is done!
+Done!
+Done!
+*/
