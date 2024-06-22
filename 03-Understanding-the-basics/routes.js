@@ -21,6 +21,7 @@ const requestHandler = (req, res) => {
             console.log(chunk)
             body.push(chunk); 
         });
+
         return req.on('end', () => {
             const parseBody = Buffer.concat(body).toString();
             const message =  parseBody.split('=')[1];
@@ -54,4 +55,4 @@ const requestHandler = (req, res) => {
 // module.exports.someText='Some hard code text';
 
 exports.handler=requestHandler;
-exports.someText='Some hard code text';
+exports.someText='Some hard code text!';
