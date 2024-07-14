@@ -10,7 +10,8 @@ const router = express.Router(); //this is mini express app tied to the other ex
 router.get('/',  (req, res, next)=>{
     console.log(adminData.products);
     // res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'));
-    res.sendFile(path.join(rootDir, 'views', 'shop.html'));
+    // res.sendFile(path.join(rootDir, 'views', 'shop.html'));
+    res.render('shop');
 });
 
 module.exports = router;
