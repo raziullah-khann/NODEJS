@@ -1,19 +1,22 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Document
-        link(rel="stylesheet", href="/css/main.css")
-    body 
-        header.main-header
-            nav.main-header-nav
-                ul.main-header-list-item
-                    li.main-header-item
-                        a.active(href="/") My Shop
-                    li.main-header-item
-                        a(href="/admin/add-product") Add Products
+extends layouts/main-layout
 
-        main
-            h1 My Products
-            p List of all the products...           
+block styles 
+    link(rel="stylesheet", href="/css/main.css")
+
+block content 
+    main
+        if prods.length > 0
+            .grid
+                each product in prods
+                    article.card.product-item 
+                        header.card__header
+                            h1.product__title #{product.title} 
+                        div.card__image 
+                            img(src="https://cdn.pixabay.com/photo/2017/10/15/09/06/book-2852903_1280.jpg" alt="A Book")  
+                        div.card__content
+                            h2.product__price $19.99
+                            p.product__description A very interesting Book about so many even more interesting things!
+                        div.card__actions
+                            button.btn Add to Cart    
+        else 
+            h1 No Products                     
