@@ -8,10 +8,11 @@ const router = express.Router(); //this is mini express app tied to the other ex
 
 // next(); //Allow the request to continue to the next middleware in line 
 router.get('/',  (req, res, next)=>{
-    console.log(adminData.products);
+    // console.log(adminData.products);
     // res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'));
     // res.sendFile(path.join(rootDir, 'views', 'shop.html'));
-    res.render('shop');
+    const products = adminData.products;
+    res.render('shop', {prods: products, pageTitle: 'Shop', path: '/'});
 });
 
 module.exports = router;
