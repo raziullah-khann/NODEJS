@@ -6,6 +6,9 @@ body {
 }
 main {
   padding: 1rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 .main-header {
   width: 100%;
@@ -38,8 +41,7 @@ main {
 }
 
 .grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: inline-block;
   justify-content: space-around;
   align-items: stretch;
   width: 20rem;
@@ -92,5 +94,31 @@ main {
 .btn:active {
   background-color: #00695c;
   color: white;
+}
+
+.product-form {
+  width: 20rem;
+  max-width: 90%;
+  margin: auto;
+}
+
+.product-item {
+  width: 20rem;
+  max-width: 95%;
+}
+
+.product__title {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.product__price {
+  text-align: center;
+  color: #4d4d4d;
+  margin-bottom: 0.5rem;
+}
+
+.product__description {
+  text-align: center;
 }
 
