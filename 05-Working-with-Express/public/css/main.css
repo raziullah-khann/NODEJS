@@ -122,3 +122,7 @@ main {
   text-align: center;
 }
 
+.pg{
+  text-align: center;
+  text-shadow: 2px 2px 4px #000000;
+}
