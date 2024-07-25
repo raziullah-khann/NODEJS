@@ -13,7 +13,12 @@ exports.getAddProductPage = (req, res, next) => {
 
 exports.postAddProductPage = (req, res, next) => {
   // console.log(req.body);
-  const product = new Products(req.body.title);
+  //i do extract my title, imageUrl, price and description and store in a constant bcs i never overwrite the value in this function 
+    const title = req.body.title;
+    const imageUrl = req.body.imageUrl;
+    const price = req.body.price;
+    const description = req.body.description;
+  const product = new Products(title, imageUrl, price, description);
   product.save();
   res.redirect("/");
 };
