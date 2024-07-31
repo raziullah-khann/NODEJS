@@ -8,9 +8,17 @@ const router = express.Router(); //this is mini express app tied to the other ex
 // next(); //Allow the request to continue to the next middleware in line
 router.get("/", shopControllers.getIndex);
 
+//get product list
 router.get("/products", shopControllers.getProducts);
 
+//get product details
+router.get("/products/:productId", shopControllers.getProduct);
+
+//get acart page
 router.get("/cart", shopControllers.getCart);
+
+//user click add to cart button then send product id on server
+router.post("/cart", shopControllers.postCart);
 
 router.get("/orders", shopControllers.getOrders);
 
