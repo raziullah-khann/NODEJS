@@ -20,6 +20,9 @@ router.get("/cart", shopControllers.getCart);
 //user click add to cart button then send product id on server
 router.post("/cart", shopControllers.postCart);
 
+//if user click on delete button on cart page then that product deleted
+router.post("/cart-delete-item", shopControllers.postCartDeleteProduct);
+
 router.get("/orders", shopControllers.getOrders);
 
 router.get("/checkout", shopControllers.getCheckout);
