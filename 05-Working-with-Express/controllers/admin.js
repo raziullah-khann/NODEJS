@@ -12,48 +12,60 @@ exports.getAddProductPage = (req, res, next) => {
 
 exports.postAddProductPage = (req, res, next) => {
   // console.log(req.body);
-  //i do extract my title, imageUrl, price and description and store in a constant bcs i never overwrite the value in this function 
-    const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
-    const price = req.body.price;
-    const description = req.body.description;
+  //i do extract my title, imageUrl, price and description and store in a constant bcs i never overwrite the value in this function
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const price = req.body.price;
+  const description = req.body.description;
   const product = new Products(null, title, imageUrl, price, description);
-  product.save();
-  res.redirect("/");
+  product
+    .save()
+    .then(() => {
+      res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 //get update product
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
   // console.log("editMode", editMode);  //true
-  if(!editMode){
-    return res.redirect('/');
+  if (!editMode) {
+    return res.redirect("/");
   }
   const productId = req.params.productId;
-  if(!productId){
-    return res.redirect('/');
+  if (!productId) {
+    return res.redirect("/");
   }
-  Products.findById(productId, product => {
+  Products.findById(productId, (product) => {
     console.log("product", product);
     res.render("admin/edit-product", {
       pageTitle: "Edit Product",
       path: "/admin/edit-product",
       editing: editMode,
-      product: product
+      product: product,
     });
-  })
+  });
 };
 
 //post updateProduct
-exports.postEditProduct = (req,res, next) => {
+exports.postEditProduct = (req, res, next) => {
   const productId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedImageUrl = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
-  const updatedProduct = new Products(productId, updatedTitle, updatedImageUrl, updatedPrice, updatedDescription);
+  const updatedProduct = new Products(
+    productId,
+    updatedTitle,
+    updatedImageUrl,
+    updatedPrice,
+    updatedDescription
+  );
   updatedProduct.save();
-  res.redirect('/admin/products');
+  res.redirect("/admin/products");
 };
 
 //get admin product
@@ -69,8 +81,8 @@ exports.getProducts = (req, res, next) => {
 };
 
 //Delete product
-exports.postDeleteProduct = (req,res, next) => {
+exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
   Products.deleteById(productId);
-  res.redirect('/admin/products');
+  res.redirect("/admin/products");
 };
