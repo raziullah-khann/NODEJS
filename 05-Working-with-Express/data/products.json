@@ -1,1 +1,9 @@
-[{"id":"15789","title":"Another Product","imageUrl":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_TK4f-BLjWWkEUXnREmbs18yrxUTRnxOPPA&s","price":"580.69","description":"Another very amazing product"}]
+[
+  {
+    "id": "15789",
+    "title": "Another Product",
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_TK4f-BLjWWkEUXnREmbs18yrxUTRnxOPPA&s",
+    "price": "580.69",
+    "description": "Another very amazing product"
+  }
+]
