@@ -23,8 +23,10 @@ router.post("/cart", shopControllers.postCart);
 //if user click on delete button on cart page then that product deleted
 router.post("/cart-delete-item", shopControllers.postCartDeleteProduct);
 
-router.get("/orders", shopControllers.getOrders);
+//if we click on OrderNow button in cart then execute this middleware function
+router.post("/create-order", shopControllers.postOrder);
 
-router.get("/checkout", shopControllers.getCheckout);
+//if user get the orders path then it will be execute
+router.get("/orders", shopControllers.getOrders);
 
 module.exports = router;
