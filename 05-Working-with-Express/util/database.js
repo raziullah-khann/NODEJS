@@ -1,23 +1,13 @@
-// const mysql = require("mysql2");
+const mongodb = require("mongodb");
+const MongoClient = mongodb.MongoClient;
 
-// //returns a connection pool object. This object has methods to get a
-// // connection from the pool, execute queries directly, release connections back to the pool, etc.
-// const pool = mysql.createPool({
-//   host: "localhost",
-//   user: "root",
-//   database: "node-complete",
-//   password: "123456",
-// });
+const mongoConnect = (callback) =>{
+    MongoClient.connect("mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(client => {
+        console.log('Connected!');
+        callback(client);
+    }).catch(err => {
+        console.log(err);
+    });
+}
 
-// module.exports = pool.promise();
-
-
-//here Sequelize connection code 
-const Sequelize = require("sequelize");
-
-const sequelize = new Sequelize("node-complete", "root", "123456", {
-  dialect: "mysql",
-  host: "localhost",
-});
-
-module.exports = sequelize;
+module.exports = mongoConnect;
