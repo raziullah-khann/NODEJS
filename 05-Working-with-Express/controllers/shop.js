@@ -1,6 +1,5 @@
 const Product = require("../models/product");
 const Cart = require("../models/cart");
-const { where } = require("sequelize");
 
 // fetch all product
 exports.getProducts = (req, res, next) => {
@@ -25,7 +24,7 @@ exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
   // console.log("productID", prodId);
   // Product.findAll({where: {id:prodId}}).then().catch()
-  Product.findByPk(prodId)
+  Product.findById(prodId)
     .then((product) => {
       // console.log("single Product",product);
       res.render("shop/product-detail", {
