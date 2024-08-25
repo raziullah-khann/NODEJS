@@ -10,15 +10,15 @@ const router = express.Router(); //This Router is like a mini express app tied t
 router.get('/add-product',  adminControllers.getAddProductPage);
 
 // /admin/products => GET, fetch all product from product model with edit and delete button
-// router.get('/products', adminControllers.getProducts);
+router.get('/products', adminControllers.getProducts);
 
 // /admin/product => POST,  to get the req.body of add-product body
 router.post('/add-product', adminControllers.postAddProductPage);
 
-// router.get('/edit-product/:productId', adminControllers.getEditProduct);
+router.get('/edit-product/:productId', adminControllers.getEditProduct);
 
 // /admin/edit-product => POST,  to get the req.body of edit-product body
-// router.post('/edit-product', adminControllers.postEditProduct);
+router.post('/edit-product', adminControllers.postEditProduct);
 
 // router.post('/delete-product', adminControllers.postDeleteProduct);
 

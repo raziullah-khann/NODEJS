@@ -1,3 +1,4 @@
+const {ObjectId} = require( "mongodb" );
 const Product = require("../models/product");
 
 exports.getAddProductPage = (req, res, next) => {
@@ -41,10 +42,9 @@ exports.getEditProduct = (req, res, next) => {
   if (!productId) {
     return res.redirect("/");
   }
-  req.user.getProducts({where: {id: productId}})
+  Product.findById(productId)
   // Products.findByPk(productId)
-    .then((products) => {
-      const product = products[0]
+    .then((product) => {
       console.log("product", product);
       res.render("admin/edit-product", {
         pageTitle: "Edit Product",
@@ -63,16 +63,10 @@ exports.postEditProduct = (req, res, next) => {
   const productId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedImageUrl = req.body.imageUrl;
-  const updatedPrice = req.body.price;
+  const updatedPrice = req.body.price; 
   const updatedDescription = req.body.description;
-  Product.findByPk(productId)
-    .then((product) => {
-      product.title = updatedTitle;
-      product.price = updatedPrice;
-      product.description = updatedDescription;
-      product.imageUrl = updatedImageUrl;
-      return product.save();
-    })
+  const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, new ObjectId(productId));
+  product.save()
     .then((result) => {
       console.log("updated product is", result);
       res.redirect("/admin/products");
@@ -84,8 +78,8 @@ exports.postEditProduct = (req, res, next) => {
 
 //get admin product
 exports.getProducts = (req, res, next) => {
-  req.user.getProducts()
-  // Products.findAll()
+  // req.user.getProducts()
+  Product.fetchAll()
     .then((products) => {
       //it should execute once it's done we get product
       res.render("admin/products", {
