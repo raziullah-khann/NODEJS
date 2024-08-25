@@ -1,4 +1,4 @@
-const Products = require("../models/product");
+const Product = require("../models/product");
 
 exports.getAddProductPage = (req, res, next) => {
   // res.send('<form action="/admin/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>');
@@ -17,15 +17,10 @@ exports.postAddProductPage = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  req.user.createProduct({
-    title: title,
-    price: price,
-    description: description,
-    imageUrl: imageUrl,
-  })
-  // Products.create({
+  const product = new Product(title, price, description, imageUrl);
+  // Product.create({
   // })
-    .then((result) => {
+    product.save().then((result) => {
       // console.log(result);
       console.log("Created Product");
       res.redirect("/admin/products");
@@ -70,7 +65,7 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
-  Products.findByPk(productId)
+  Product.findByPk(productId)
     .then((product) => {
       product.title = updatedTitle;
       product.price = updatedPrice;
@@ -107,7 +102,7 @@ exports.getProducts = (req, res, next) => {
 //Delete product
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
-  Products.findByPk(productId)
+  Product.findByPk(productId)
     .then((product) => {
       return product.destroy();
     })

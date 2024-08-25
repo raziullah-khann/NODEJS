@@ -11,7 +11,7 @@ app.set("view engine", "ejs"); //Setting the View Engine => responsible for rend
 app.set("views", "views"); //Setting the Views Directory =>
 
 const adminRoutes = require("./routes/admin");
-// const shopRoute = require("./routes/shop");
+const shopRoute = require("./routes/shop");
 const pageNotFound = require("./controllers/error");
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,10 +27,11 @@ app.use((req, res, next) => {
   //   .catch((err) => {
   //     console.log(err);
   //   });
+  next();
 });
   
 app.use("/admin", adminRoutes);
-// app.use(shopRoute);
+app.use(shopRoute);
 
 app.use(pageNotFound.get404Page);
 
