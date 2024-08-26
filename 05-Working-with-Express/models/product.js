@@ -14,8 +14,10 @@ class Product {
     const db = getDb();
     let dbOp;
     if (this._id) {
-      //update existing document 
-      dbOp = db.collection("products").updateOne({_id: this._id}, {$set:this});
+      //update existing document
+      dbOp = db
+        .collection("products")
+        .updateOne({ _id: this._id }, { $set: this });
     } else {
       //insert new document
       dbOp = db.collection("products").insertOne(this);
@@ -61,14 +63,16 @@ class Product {
 
   static deleteById(productId) {
     const db = getDb();
-    return db.collection("products").deleteOne({_id: new mongodb.ObjectId(productId)}).then(result => {
-      console.log("Deleted");
-      // return result;
-    }).catch(err=> {
-      console.log(err);
-    })
+    return db
+      .collection("products")
+      .deleteOne({ _id: new mongodb.ObjectId(productId) })
+      .then((result) => {
+        console.log("Deleted");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
-
 }
 
 module.exports = Product;
