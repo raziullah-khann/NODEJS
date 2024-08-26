@@ -20,7 +20,7 @@ router.get('/edit-product/:productId', adminControllers.getEditProduct);
 // /admin/edit-product => POST,  to get the req.body of edit-product body
 router.post('/edit-product', adminControllers.postEditProduct);
 
-// router.post('/delete-product', adminControllers.postDeleteProduct);
+router.post('/delete-product', adminControllers.postDeleteProduct);
 
 // exports.routes = router;
 // exports.products = products;
