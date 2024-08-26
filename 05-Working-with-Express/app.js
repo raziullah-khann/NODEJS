@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const mongoConnect = require('./util/database').mongoConnect;
+const User = require("./models/user");
 
 const app = express(); //initialize express
 
@@ -19,14 +20,14 @@ app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global
 
 // This middleware will run for every incoming request
 app.use((req, res, next) => {
-  // User.findByPk(1)
-  //   .then((user) => {  //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
-  //     req.user = user; //Making User Data Available Globally: here we can simply add new field to our request object
-  //     next();
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
+  User.findById("66ccce9c3576eca5a3304dfc")
+    .then((user) => {  //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
+      req.user = user; //Making User Data Available Globally: here we can simply add new field to our request object
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   next();
 });
   
