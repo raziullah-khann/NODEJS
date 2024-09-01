@@ -22,13 +22,12 @@ app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global
 app.use((req, res, next) => {
   User.findById("66ccce9c3576eca5a3304dfc")
     .then((user) => {  //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
-      req.user = user; //Making User Data Available Globally: here we can simply add new field to our request object
+      req.user = new User(user.name, user.email, user.cart, user._id); //Making User Data Available Globally: here we can simply add new field to our request object
       next();
     })
     .catch((err) => {
       console.log(err);
     });
-  next();
 });
   
 app.use("/admin", adminRoutes);

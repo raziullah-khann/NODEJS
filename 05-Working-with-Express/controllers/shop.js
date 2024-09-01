@@ -1,5 +1,5 @@
 const Product = require("../models/product");
-const Cart = require("../models/cart");
+// const Cart = require("../models/cart");
 
 // fetch all product
 exports.getProducts = (req, res, next) => {
@@ -11,7 +11,7 @@ exports.getProducts = (req, res, next) => {
       res.render("shop/product-list", {
         prods: Product,
         pageTitle: "All Product",
-        path: "/Product",
+        path: "/products",
       });
     })
     .catch((err) => {
@@ -30,7 +30,7 @@ exports.getProduct = (req, res, next) => {
       res.render("shop/product-detail", {
         product: product,
         pageTitle: product.title,
-        path: "/Product",
+        path: "/products",
       });
     })
     .catch((err) => {
@@ -60,6 +60,7 @@ exports.getCart = (req, res, next) => {
       return cart
         .getProducts()
         .then((products) => {
+          console.log("Cart path:", "/cart"); // Add this line
           // console.log("product instance hai many to many ",products);
           res.render("shop/cart", {
             path: "/cart",
@@ -80,37 +81,44 @@ exports.getCart = (req, res, next) => {
 // add-product.ejs file me add to product button pe click krne ke baad /cart route pe req.body me product id mil jayega hidden input field me data bhej diya hai waha se
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  let fetchCart;
-  let newQuantity = 1;
-  req.user
-    .getCart()
-    .then((cart) => {
-      fetchCart = cart;
-      return cart.getProducts({ where: { id: prodId } });
-    })
-    .then((products) => {
-      let product;
-      if (products.length > 0) {
-        product = products[0];
-      }
-      if (product) {
-        const oldQuantity = product.cartItem.quantity;
-        newQuantity = oldQuantity + 1;
-        return product;
-      }
-      return Product.findByPk(prodId);
-    })
-    .then((product) => {
-      return fetchCart.addProduct(product, {
-        through: { quantity: newQuantity },
-      });
-    })
-    .then(() => {
-      res.redirect("/cart");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+Product.findById(prodId).then(product => {
+  return req.user.addToCart(product); //here addTocart return promise
+}).catch(result => {
+  console.log(result);
+}).catch(err=> {
+  console.log(err)
+})
+  // let fetchCart;
+  // let newQuantity = 1;
+  // req.user
+  //   .getCart()
+  //   .then((cart) => {
+  //     fetchCart = cart;
+  //     return cart.getProducts({ where: { id: prodId } });
+  //   })
+  //   .then((products) => {
+  //     let product;
+  //     if (products.length > 0) {
+  //       product = products[0];
+  //     }
+  //     if (product) {
+  //       const oldQuantity = product.cartItem.quantity;
+  //       newQuantity = oldQuantity + 1;
+  //       return product;
+  //     }
+  //     return Product.findByPk(prodId);
+  //   })
+  //   .then((product) => {
+  //     return fetchCart.addProduct(product, {
+  //       through: { quantity: newQuantity },
+  //     });
+  //   })
+  //   .then(() => {
+  //     res.redirect("/cart");
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
