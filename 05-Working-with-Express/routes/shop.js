@@ -15,7 +15,7 @@ router.get("/products", shopControllers.getProducts);
 router.get("/products/:productId", shopControllers.getProduct);
 
 //get acart page
-// router.get("/cart", shopControllers.getCart);
+router.get("/cart", shopControllers.getCart);
 
 //user click add to cart button then send product id on server
 router.post("/cart", shopControllers.postCart);
