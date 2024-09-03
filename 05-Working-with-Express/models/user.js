@@ -56,8 +56,10 @@ class User {
       .collection("products")
       .find({ _id: { $in: productIds } })
       .toArray()
-      .then((products) => { //i have array of products here fresh from the database
-        return products.map((p) => { //here i transform of each and every products and return new array including qty property 
+      .then((products) => {
+        //i have array of products here fresh from the database
+        return products.map((p) => {
+          //here i transform of each and every products and return new array including qty property
           return {
             ...p,
             quantity: this.cart.items.find((i) => {
@@ -69,6 +71,19 @@ class User {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  deleteItemFromCart(prodId) {
+    const updatedCartItems = this.cart.items.filter(
+      (p) => p.productId.toString() !== prodId.toString()
+    );
+    const db = getDb();
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new mongodb.ObjectId(this._id) },
+        { $set: { cart: { items: updatedCartItems } } }
+      );
   }
 
   static findById(userId) {
