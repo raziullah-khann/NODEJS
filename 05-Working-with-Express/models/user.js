@@ -15,6 +15,7 @@ class User {
     return db.collection("users").insertOne(this);
   }
 
+  //here start cart
   addToCart(product) {
     //find valid index or -1
     const cartProductIndex = this.cart.items.findIndex(
@@ -84,6 +85,26 @@ class User {
         { _id: new mongodb.ObjectId(this._id) },
         { $set: { cart: { items: updatedCartItems } } }
       );
+  }
+
+  //here start add order
+  addOrder() {
+    const db = getDb(); // here i reach out my database client and reach out new collection orders
+    return db
+      .collection("orders")
+      .insertOne(this.cart)
+      .then((result) => {
+        this.cart = { items: [] }; // here i clear the cart in user object and also i want to clear in a database
+        return db
+          .collection("users")
+          .updateOne(
+            { _id: new mongodb.ObjectId(this._id) },
+            { $set: { cart: { items: [] } } } // clear the cart in database after order cart clear
+          );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   static findById(userId) {

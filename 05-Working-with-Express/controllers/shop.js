@@ -77,7 +77,7 @@ exports.postCart = (req, res, next) => {
     })
     .then((result) => {
       console.log(result);
-      res.redirect("/cart")
+      res.redirect("/cart");
     })
     .catch((err) => {
       console.log(err);
@@ -95,32 +95,8 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  let fetchCart;
   req.user
-    .getCart()
-    .then((cart) => {
-      fetchCart = cart;
-      return cart.getProducts();
-    })
-    .then((products) => {
-      // console.log("my cart products here!", products);
-      return req.user
-        .createOrder()
-        .then((order) => {
-          return order.addProduct(
-            products.map((product) => {
-              product.orderItem = { quantity: product.cartItem.quantity };
-              return product;
-            })
-          );
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .then((result) => {
-      return fetchCart.setProducts(null);
-    })
+    .addOrder()
     .then((result) => {
       res.redirect("/orders");
     })
