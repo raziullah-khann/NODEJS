@@ -116,9 +116,9 @@ class User {
       });
   }
 
-  getOrder() {
+  getOrders() {
     const db = getDb();
-    // return db.collection("orders").find()
+    return db.collection("orders").find({"user._id": new mongodb.ObjectId(this._id)}).toArray();
   }
 
   static findById(userId) {
