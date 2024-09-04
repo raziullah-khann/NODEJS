@@ -47,6 +47,7 @@ class User {
       );
   }
 
+  // it return cart products
   getCart() {
     const db = getDb();
     //here we get products ids array use to fetch products bcs i am not store products detail in cart store only product id.
@@ -87,24 +88,37 @@ class User {
       );
   }
 
-  //here start add order
+  //there are two one-to-many relationships: 1. Order and Products (One-to-Many) => Each order can contain multiple products.
+  //  2. Order and User (One-to-Many) => Each user can place multiple orders.
   addOrder() {
     const db = getDb(); // here i reach out my database client and reach out new collection orders
-    return db
-      .collection("orders")
-      .insertOne(this.cart)
+    return this.getCart()
+      .then((products) => {
+        const order = {
+          //now i have products info and user info and here i use one to many relation one user has many orders
+          items: products,
+          user: {
+            _id: new mongodb.ObjectId(this._id),
+            name: this.username,
+          },
+        };
+        return db.collection("orders").insertOne(order);
+      })
       .then((result) => {
         this.cart = { items: [] }; // here i clear the cart in user object and also i want to clear in a database
-        return db
-          .collection("users")
-          .updateOne(
-            { _id: new mongodb.ObjectId(this._id) },
-            { $set: { cart: { items: [] } } } // clear the cart in database after order cart clear
-          );
+        return db.collection("users").updateOne(
+          { _id: new mongodb.ObjectId(this._id) },
+          { $set: { cart: { items: [] } } } // clear the cart in database after order cart clear
+        );
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  getOrder() {
+    const db = getDb();
+    // return db.collection("orders").find()
   }
 
   static findById(userId) {
