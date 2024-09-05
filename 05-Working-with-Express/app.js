@@ -1,9 +1,8 @@
 const path = require("path");
-
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
-const mongoConnect = require('./util/database').mongoConnect;
 const User = require("./models/user");
 
 const app = express(); //initialize express
@@ -20,21 +19,29 @@ app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global
 
 // This middleware will run for every incoming request
 app.use((req, res, next) => {
-  User.findById("66ccce9c3576eca5a3304dfc")
-    .then((user) => {  //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
-      req.user = new User(user.name, user.email, user.cart, user._id); //Making User Data Available Globally: here we can simply add new field to our request object
-      next();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  // User.findById("66ccce9c3576eca5a3304dfc")
+  //   .then((user) => {  //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
+  //     req.user = new User(user.name, user.email, user.cart, user._id); //Making User Data Available Globally: here we can simply add new field to our request object
+  //     next();
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+  next();
 });
-  
+
 app.use("/admin", adminRoutes);
 app.use(shopRoute);
-
 app.use(pageNotFound.get404Page);
 
-mongoConnect(()=>{
-  app.listen(3000);
-})
+mongoose
+  .connect(
+    "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  )
+  .then((result) => {
+    console.log('Connected to MongoDB');
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
