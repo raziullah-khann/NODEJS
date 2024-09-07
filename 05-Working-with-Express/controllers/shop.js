@@ -6,7 +6,7 @@ exports.getProducts = (req, res, next) => {
   // console.log(adminData.Product);
   // res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'));
   // res.sendFile(path.join(rootDir, 'views', 'shop.html'));
-  Product.fetchAll()
+  Product.find()
     .then((Product) => {
       res.render("shop/product-list", {
         prods: Product,
@@ -39,10 +39,12 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll()
-    .then((Product) => {
+  Product.find()
+    .then((product) => {
+      console.log(product);
+      
       res.render("shop/index", {
-        prods: Product,
+        prods: product,
         pageTitle: "Shop",
         path: "/",
       });

@@ -6,13 +6,13 @@ const shopControllers = require('../controllers/shop');
 const router = express.Router(); //this is mini express app tied to the other express app
 
 // next(); //Allow the request to continue to the next middleware in line
-// router.get("/", shopControllers.getIndex);
+router.get("/", shopControllers.getIndex);
 
 //get product list
-// router.get("/products", shopControllers.getProducts);
+router.get("/products", shopControllers.getProducts);
 
 //get product details
-// router.get("/products/:productId", shopControllers.getProduct);
+router.get("/products/:productId", shopControllers.getProduct);
 
 //get acart page
 // router.get("/cart", shopControllers.getCart);
