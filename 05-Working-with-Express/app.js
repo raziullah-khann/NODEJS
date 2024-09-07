@@ -19,15 +19,14 @@ app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global
 
 // This middleware will run for every incoming request
 app.use((req, res, next) => {
-  // User.findById("66ccce9c3576eca5a3304dfc")
-  //   .then((user) => {  //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
-  //     req.user = new User(user.name, user.email, user.cart, user._id); //Making User Data Available Globally: here we can simply add new field to our request object
-  //     next();
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  next();
+  User.findById("66dc6a8ca269a15d09fda59b")
+    .then((user) => {  //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
+      req.user = user; //Making User Data Available Globally: here we can simply add new field to our request object
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 app.use("/admin", adminRoutes);
@@ -39,7 +38,17 @@ mongoose
     "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then((result) => {
-    console.log('Connected to MongoDB');
+    console.log("Connected to MongoDB");
+    User.findOne().then(user=> {
+      if(!user){
+        const user = new User({
+          name: "Raziullah",
+          email: "raziullahkhan25@gmail.com",
+          cart: { items: [] },
+        });
+        user.save();
+      }
+    })
     app.listen(3000);
   })
   .catch((err) => {
