@@ -19,17 +19,15 @@ exports.getProducts = (req, res, next) => {
     });
 };
 
-// fetch single product
+// fetch single product for product details
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  // console.log("productID", prodId);
-  // Product.findAll({where: {id:prodId}}).then().catch()
-  Product.findById(prodId)
+  Product.findOne({_id: prodId})
     .then((product) => {
-      // console.log("single Product",product);
+      console.log("single Product",product);
       res.render("shop/product-detail", {
         product: product,
-        pageTitle: product.title,
+        pageTitle: "Product-Detail",
         path: "/products",
       });
     })
