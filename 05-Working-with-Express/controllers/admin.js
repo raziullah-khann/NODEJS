@@ -17,7 +17,7 @@ exports.postAddProductPage = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, price, description, imageUrl, null, req.user._id);
+  const product = new Product({title: title, price: price, description: description, imageUrl: imageUrl});
   // Product.create({
   // })
     product.save().then((result) => {
@@ -78,7 +78,7 @@ exports.postEditProduct = (req, res, next) => {
 //get admin product
 exports.getProducts = (req, res, next) => {
   // req.user.getProducts()
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       //it should execute once it's done we get product
       res.render("admin/products", {

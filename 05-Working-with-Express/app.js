@@ -36,7 +36,7 @@ app.use(pageNotFound.get404Page);
 
 mongoose
   .connect(
-    "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then((result) => {
     console.log('Connected to MongoDB');
