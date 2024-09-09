@@ -4,18 +4,18 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-            <main>
+            <main class="mncls">
                 <% if(products.length>0){ %>
                     <ul class="cart__item-list">
                         <% for(product of products){ %>
                             <li class="cart__item">
                                 <h1>
-                                    <%= product.title %>
+                                    <%= product.productId.title %>
                                 </h1>
                                 <h2>Quantity: <%= product.quantity %>
                                 </h2>
                                 <form action="cart-delete-item" method="POST">
-                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                    <input type="hidden" name="productId" value="<%= product.productId._id %>">
                                     <button class="btn danger" type="submit">Delete</button>
                                 </form>
                             </li>
