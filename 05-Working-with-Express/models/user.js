@@ -18,6 +18,32 @@ const userSchema = new Schema({
   },
 });
 
+// Now this is a utility function that save itself so where the object saves itself by using 
+userSchema.methods.addToCart = function(product) {
+      //find valid index or -1
+    const cartProductIndex = this.cart.items.findIndex(
+      (cartProduct) =>
+        cartProduct.productId.toString() === product._id.toString()
+    );
+    let newQuantity = 1;
+    const updatedCartItems = [...this.cart.items]; //here i am doing shallow copy [{},{}...]
+
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: product._id,
+        quantity: newQuantity,
+      });
+    }
+    const updatedCart = {
+      items: updatedCartItems,
+    };
+    this.cart = updatedCart;
+    return this.save();
+}
+
 module.exports = model("User", userSchema);
 
 // const mongodb = require("mongodb");

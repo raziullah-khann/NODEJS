@@ -22,7 +22,7 @@ exports.postAddProductPage = (req, res, next) => {
     price: price,
     description: description,
     imageUrl: imageUrl,
-    userId: req.user._id
+    userId: req.user._id,
   });
   // Product.create({
   // })
@@ -93,7 +93,10 @@ exports.postEditProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   // req.user.getProducts()
   Product.find()
+    // .select("title price -_id")
+    // .populate("userId", "name")
     .then((products) => {
+      console.log("admin products", products);""
       //it should execute once it's done we get product
       res.render("admin/products", {
         prods: products,
