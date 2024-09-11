@@ -27,6 +27,6 @@ router.post("/cart-delete-item", shopControllers.postCartDeleteProduct);
 router.post("/create-order", shopControllers.postOrder);
 
 //if user get the orders path then it will be execute
-// router.get("/orders", shopControllers.getOrders);
+router.get("/orders", shopControllers.getOrders);
 
 module.exports = router;
