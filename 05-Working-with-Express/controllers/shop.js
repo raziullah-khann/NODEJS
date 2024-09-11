@@ -1,5 +1,5 @@
 const Product = require("../models/product");
-// const Cart = require("../models/cart");
+const Order = require("../models/order");
 
 // fetch all product
 exports.getProducts = (req, res, next) => {
@@ -22,9 +22,9 @@ exports.getProducts = (req, res, next) => {
 // fetch single product for product details
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.findOne({_id: prodId})
+  Product.findOne({ _id: prodId })
     .then((product) => {
-      console.log("single Product",product);
+      console.log("single Product", product);
       res.render("shop/product-detail", {
         product: product,
         pageTitle: "Product-Detail",
@@ -40,7 +40,7 @@ exports.getIndex = (req, res, next) => {
   Product.find()
     .then((product) => {
       console.log(product);
-      
+
       res.render("shop/index", {
         prods: product,
         pageTitle: "Shop",
@@ -55,7 +55,7 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user
     .populate("cart.items.productId") // Populate the productId with the actual Product document and returns a Promise
-    .then((user) => {
+    .then((user) => { //here user is req.user
       // console.log("get cart product", user.cart.items);
       const products = user.cart.items;
       res.render("shop/cart", {
@@ -98,7 +98,20 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 exports.postOrder = (req, res, next) => {
   req.user
-    .addOrder()
+    .populate("cart.items.productId")
+    .then((user) => { //here user is req.user
+      const products = user.cart.items.map((i) => {
+        return { product: i.productId, quantity: i.quantity };
+      });
+      const order = new Order({
+        products: products,
+        user: {
+          userId: req.user._id,
+          name: req.user.name,
+        },
+      });
+      return order.save();
+    })
     .then((result) => {
       res.redirect("/orders");
     })
