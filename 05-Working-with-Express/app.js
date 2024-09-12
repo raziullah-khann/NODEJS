@@ -12,6 +12,7 @@ app.set("views", "views"); //Setting the Views Directory =>
 
 const adminRoutes = require("./routes/admin");
 const shopRoute = require("./routes/shop");
+const authRoute = require("./routes/auth");
 const pageNotFound = require("./controllers/error");
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
 
 app.use("/admin", adminRoutes);
 app.use(shopRoute);
+app.use(authRoute);
 app.use(pageNotFound.get404Page);
 
 mongoose
