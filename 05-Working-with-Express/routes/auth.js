@@ -4,4 +4,6 @@ const router = express.Router(); //this is mini express app tied to the other ex
 
 router.get("/login", authControllers.getLogin);
 
+router.post("/login", authControllers.postLogin);
+
 module.exports = router;
