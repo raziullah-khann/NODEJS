@@ -10,6 +10,6 @@ exports.getLogin = (req, res, next) => {
 
 //here i will get my login data
 exports.postLogin = (req, res, next) => {
-    res.setHeader("Set-Cookie", "loggedIn=true");
+    res.setHeader("Set-Cookie", "loggedIn=true;");
     res.redirect("/")
   };
