@@ -3,10 +3,18 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
+
+const MONGODB_URI = "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0";
 
 const User = require("./models/user");
 
 const app = express(); //initialize express
+
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "session"
+})
 
 app.set("view engine", "ejs"); //Setting the View Engine => responsible for rendering dynamic HTML based on templates and data.
 app.set("views", "views"); //Setting the Views Directory =>
@@ -24,6 +32,7 @@ app.use(
     secret: "my secret", // Secret key for signing the session ID cookie
     resave: false, // Do not resave the session if it's not modified
     saveUninitialized: false, // Do not save uninitialized sessions
+    store: store,
   })
 );
 
@@ -47,7 +56,7 @@ app.use(pageNotFound.get404Page);
 
 mongoose
   .connect(
-    "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0"
+    MONGODB_URI
   )
   .then((result) => {
     console.log("Connected to MongoDB");
