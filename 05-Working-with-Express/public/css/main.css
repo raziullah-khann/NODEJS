@@ -16,6 +16,8 @@ main {
   width: 100%;
   height: 3.5rem;
   background-color: #d6eb38;
+  display: flex;
+  align-items: center;
 }
 .main-header-nav {
   height: 100%;
@@ -34,14 +36,29 @@ main {
   margin: 0;
   padding: 0 1.5rem;
 }
-.main-header-item a {
+/* Common styles for both <a> and <button> */
+.main-header-item a,
+.main-header-item button {
+  font: inherit;
+  border: none;
   text-decoration: none;
   color: black;
+  cursor: pointer;
 }
+
+.main-header-item button {
+  border: none;
+  background: transparent;
+}
+/* Hover, active, and specific active class styles for both <a> and <button> */
 .main-header-item a:hover,
 .main-header-item a:active,
-.main-header-item a.active {
+.main-header-item a.active,
+.main-header-item button:hover,
+.main-header-item button:active,
+.main-header-item button.active {
   color: #5609e4;
+  background-color: #d6eb38;
 }
 
 /* product card css */
