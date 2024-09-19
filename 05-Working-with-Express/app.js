@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 
-const MONGODB_URI = "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0";
+const MONGODB_URI =
+  "mongodb+srv://Raziullah-Khan:AXLIVFo3hpQp1jRF@cluster0.frgxn.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0";
 
 const User = require("./models/user");
 
@@ -13,8 +14,8 @@ const app = express(); //initialize express
 
 const store = new MongoDBStore({
   uri: MONGODB_URI,
-  collection: "session"
-})
+  collection: "session",
+});
 
 app.set("view engine", "ejs"); //Setting the View Engine => responsible for rendering dynamic HTML based on templates and data.
 app.set("views", "views"); //Setting the Views Directory =>
@@ -36,17 +37,16 @@ app.use(
   })
 );
 
-// This middleware will run for every incoming request
 app.use((req, res, next) => {
-  User.findById("66dc6a8ca269a15d09fda59b")
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
-      //this user is not normal javascript object this is sequelize object here available all sequelize method like destroy etc.
-      req.user = user; //Making User Data Available Globally: here we can simply add new field to our request object
+      req.user = user;
       next();
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 });
 
 app.use("/admin", adminRoutes);
@@ -55,9 +55,7 @@ app.use(authRoute);
 app.use(pageNotFound.get404Page);
 
 mongoose
-  .connect(
-    MONGODB_URI
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     console.log("Connected to MongoDB");
     User.findOne().then((user) => {
