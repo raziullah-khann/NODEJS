@@ -7,13 +7,13 @@
             <li class="main-header-item">
                 <a href="/products" class="<%= path === '/products' ? 'active' : '' %>">Products</a>
             </li>
-            <li class="main-header-item">
-                <a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a>
-            </li>
-            <li class="main-header-item">
-                <a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a>
-            </li>
             <% if(isAuthenticated){ %>
+                <li class="main-header-item">
+                    <a href="/cart" class="<%= path === '/cart' ? 'active' : '' %>">Cart</a>
+                </li>
+                <li class="main-header-item">
+                    <a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a>
+                </li>
                 <li class="main-header-item">
                     <a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add
                         Products</a>
@@ -25,14 +25,17 @@
                 <% } %>
         </ul>
         <ul class="main-header-list-item">
-            <li class="main-header-item">
-                <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
-            </li>
-            <li class="main-header-item">
-                <form action="/logout" method="post">
-                    <button type="submit">Logout</button>
-                </form>
-            </li>
-        </ul>
+                <% if(!isAuthenticated){ %>
+                <li class="main-header-item">
+                    <a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a>
+                </li>
+                <% } else { %>
+                <li class="main-header-item">
+                    <form action="/logout" method="post">
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+                <% } %>
+            </ul>
     </nav>
 </header>
