@@ -33,7 +33,23 @@ exports.getSignup = (req, res, next) => {
 }
 
 exports.postSignup = (req, res, next) => {
-  
+  const {email, password, confirmPassword} = req.body;
+  //one step we want to do before we create a new user,  first we check user is already exist or in my database bcs i don't want duplicate email
+  User.findOne({email: email}).then(userDoc => {
+    if(userDoc){
+      return res.redirect("/signup");
+    }
+    const user = new User({
+      email: email,
+      password: password,
+      cart: { items: []},
+    });
+    return user.save();
+  }).then(result => {
+    res.redirect("/login");
+  }).catch(err => {
+    console.log(err);
+  });
 }
 
 exports.postLogout = (req, res, next) => {
