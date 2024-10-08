@@ -54,7 +54,7 @@ exports.postSignup = (req, res, next) => {
       if (userDoc) {
         return res.redirect("/signup");
       }
-      return bcrypt
+      return bcrypt //This is an asynchronous task and therefore it will return promise that resolve with the hashed password.
         .hash(password, 12)
         .then((hashPassword) => {
           const user = new User({
