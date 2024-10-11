@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -16,6 +17,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "session",
 });
+const csrfProtection = csrf();
 
 app.set("view engine", "ejs"); //Setting the View Engine => responsible for rendering dynamic HTML based on templates and data.
 app.set("views", "views"); //Setting the Views Directory =>
@@ -36,6 +38,7 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
   if (!req.session.user) {

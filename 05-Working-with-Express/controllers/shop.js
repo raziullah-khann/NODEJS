@@ -42,12 +42,12 @@ exports.getIndex = (req, res, next) => {
   Product.find()
     .then((product) => {
       console.log(product);
-
       res.render("shop/index", {
         prods: product,
         pageTitle: "Shop",
         path: "/",
-        isAuthenticated: req.session.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn,
+        csrfToken: req.csrfToken()
       });
     })
     .catch((err) => {
