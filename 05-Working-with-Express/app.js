@@ -38,7 +38,7 @@ app.use(
     store: store,
   })
 );
-app.use(csrfProtection);
+app.use(csrfProtection);// Enable CSRF protection
 
 app.use((req, res, next) => {
   if (!req.session.user) {
@@ -51,6 +51,13 @@ app.use((req, res, next) => {
     })
     .catch((err) => console.log(err));
 });
+
+// Make CSRF token available to all views
+app.use((req,res,next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
 
 app.use("/admin", adminRoutes);
 app.use(shopRoute);
