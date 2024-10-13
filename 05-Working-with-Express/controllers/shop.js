@@ -110,7 +110,7 @@ exports.postOrder = (req, res, next) => {
         products: products,
         user: {
           userId: req.user._id,
-          name: req.user.name,
+          email: req.user.email,
         },
       });
       return order.save();
