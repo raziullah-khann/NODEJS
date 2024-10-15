@@ -96,7 +96,7 @@ exports.getProducts = (req, res, next) => {
     // .select("title price -_id")
     // .populate("userId", "name")
     .then((products) => {
-      console.log("admin products", products);""
+      console.log("admin products", products);
       //it should execute once it's done we get product
       res.render("admin/products", {
         prods: products,
