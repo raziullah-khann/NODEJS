@@ -5,7 +5,7 @@ exports.getLogin = (req, res, next) => {
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    isAuthenticated: false,
+    errorMessage: req.flash("error")
   });
 };
 
@@ -14,7 +14,9 @@ exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email: email }) // Assuming you're retrieving the same user
     .then((user) => {
-      if (!user) { //findOne() => if user entered wrong email return null 
+      if (!user) {
+        //findOne() => if user entered wrong email return null
+        req.flash("error", "Invalid email or password!");
         return res.redirect("/login");
       }
       bcrypt
@@ -27,12 +29,13 @@ exports.postLogin = (req, res, next) => {
               console.log(err);
               res.redirect("/"); //here you are done saving the session data then it will redirect
             });
-          }else{
+          } else {
             res.redirect("/login");
           }
-        })
+        });
     })
-    .catch((err) => { // Executes only if there is an error (e.g., database or bcrypt error).
+    .catch((err) => {
+      // Executes only if there is an error (e.g., database or bcrypt error).
       console.log(err);
       res.redirect("/login");
     });
@@ -42,7 +45,6 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Sign Up",
-    isAuthenticated: false,
   });
 };
 
