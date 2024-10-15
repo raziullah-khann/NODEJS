@@ -2,10 +2,16 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 
 exports.getLogin = (req, res, next) => {
+  let message = req.flash("error")
+  if(message.length > 0) {
+    message = message[0]
+  } else{
+    message = null;
+  }
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    errorMessage: req.flash("error")
+    errorMessage: message
   });
 };
 
@@ -30,6 +36,7 @@ exports.postLogin = (req, res, next) => {
               res.redirect("/"); //here you are done saving the session data then it will redirect
             });
           } else {
+            req.flash("error", "Invalid email or password!");
             res.redirect("/login");
           }
         });
@@ -42,9 +49,16 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
+  let message = req.flash("error")
+  if(message.length > 0) {
+    message = message[0]
+  } else{
+    message = null;
+  }
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Sign Up",
+    errorMessage: message
   });
 };
 
@@ -54,6 +68,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
+        req.flash("error", "E-mail exist already, please pick different one!");
         return res.redirect("/signup");
       }
       return bcrypt //This is an asynchronous task and therefore it will return promise that resolve with the hashed password.
