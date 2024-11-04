@@ -3,28 +3,30 @@ const crypto = require("crypto");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
-const sendgridTansport = require("nodemailer-sendgrid-transport"); 
-const {log} = require( "console" );
+const sendgridTansport = require("nodemailer-sendgrid-transport");
+const { log } = require("console");
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
-const transporter = nodemailer.createTransport(sendgridTansport({
-  auth:{
-    api_key: SENDGRID_API_KEY
-  }
-}))
+const transporter = nodemailer.createTransport(
+  sendgridTansport({
+    auth: {
+      api_key: SENDGRID_API_KEY,
+    },
+  })
+);
 
 exports.getLogin = (req, res, next) => {
-  let message = req.flash("error")
-  if(message.length > 0) {
-    message = message[0]
-  } else{
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
     message = null;
   }
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    errorMessage: message
+    errorMessage: message,
   });
 };
 
@@ -62,16 +64,16 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
-  let message = req.flash("error")
-  if(message.length > 0) {
-    message = message[0]
-  } else{
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
     message = null;
   }
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Sign Up",
-    errorMessage: message
+    errorMessage: message,
   });
 };
 
@@ -100,10 +102,11 @@ exports.postSignup = (req, res, next) => {
             to: email,
             from: "raziullahkhan25@gmail.com",
             subject: "SignUp succeesded!",
-            html: "<h1>You Successfully signed up!</h1>"
-          })
-        }).catch(err => {
-          console.log(err); 
+            html: "<h1>You Successfully signed up!</h1>",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
     })
     .catch((err) => {
@@ -119,48 +122,72 @@ exports.postLogout = (req, res, next) => {
 };
 
 exports.getReset = (req, res, next) => {
-  let message = req.flash("error")
-  if(message.length > 0) {
-    message = message[0]
-  } else{
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
     message = null;
   }
   res.render("auth/reset", {
     path: "/reset",
     pageTitle: "Reset Password",
-    errorMessage: message
+    errorMessage: message,
   });
-}
+};
 
 exports.postReset = (req, res, next) => {
   crypto.randomBytes(32, (err, buffer) => {
-    if(err) {
+    if (err) {
       console.log(err);
       return res.redirect("/reset");
     }
     const token = buffer.toString("hex");
-    User.findOne({email: req.body.email}).then(user => {
-      if(!user) {
-        req.flash("error", "No account with that email found.");
-        return res.redirect("/reset");
-      }
-      user.resetToken = token;
-      user.resetTokenExpiration = Date.now() + 3600000;
-      return user.save();
-    }).then(result => {
-      res.redirect("/")
-      return transporter.sendMail({
-        to: req.body.email,
-        from: "raziullahkhan25@gmail.com",
-        subject: "Password Reset!",
-        html: `
+    User.findOne({ email: req.body.email })
+      .then((user) => {
+        if (!user) {
+          req.flash("error", "No account with that email found.");
+          return res.redirect("/reset");
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
+        return user.save();
+      })
+      .then((result) => {
+        res.redirect("/");
+        return transporter.sendMail({
+          to: req.body.email,
+          from: "raziullahkhan25@gmail.com",
+          subject: "Password Reset!",
+          html: `
         <p>You requested password reset</p>
         <p>Click this <a href="https://localhost:3000/reset/${token}">link</a> to set new password</p>
-        `
+        `,
+        });
       })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+};
+
+exports.getNewPassword = (req, res, next) => {
+  const token = req.params.token;
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+    .then((user) => {
+      let message = req.flash("error");
+      if (message.length > 0) {
+        message = message[0];
+      } else {
+        message = null;
+      }
+      res.render("auth/new-password", {
+        path: "/new-password",
+        pageTitle: "New Password",
+        errorMessage: message,
+        userId: user._id.toString(),
+      });
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
     });
-  })
-}
+};
