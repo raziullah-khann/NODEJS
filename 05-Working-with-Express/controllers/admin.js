@@ -116,7 +116,7 @@ exports.getProducts = (req, res, next) => {
 //Delete product
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
-  Product.deleteOne({id: productId, userId: req.user._id})
+  Product.deleteOne({_id: productId, userId: req.user._id})
     .then(() => {
       console.log("Destroy Product!");
       res.redirect("/admin/products");
