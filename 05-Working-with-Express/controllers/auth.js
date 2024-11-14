@@ -4,7 +4,6 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const sendgridTansport = require("nodemailer-sendgrid-transport");
-const { log } = require("console");
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
