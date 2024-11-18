@@ -4,6 +4,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const sendgridTansport = require("nodemailer-sendgrid-transport");
+const { validationResult } = require("express-validator");
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
@@ -79,6 +80,16 @@ exports.getSignup = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
   //one step we want to do before we create a new user, first we check user is already exist or not in my database bcs i don't want duplicate email
+  const errors = validationResult(req);
+  console.log("errors", errors);
+  if(!errors.isEmpty()){
+    console.log("errors.isEmpty()", errors.isEmpty());
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Sign Up",
+      errorMessage: errors.array(),
+    });
+  }
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
