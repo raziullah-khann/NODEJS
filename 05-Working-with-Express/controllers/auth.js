@@ -81,13 +81,14 @@ exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
   //one step we want to do before we create a new user, first we check user is already exist or not in my database bcs i don't want duplicate email
   const errors = validationResult(req);
-  console.log("errors", errors);
+  console.log("errors.array()", errors.array());
   if(!errors.isEmpty()){
-    console.log("errors.isEmpty()", errors.isEmpty());
+    // console.log("errors.isEmpty()", errors.isEmpty()); //false
+    console.log("errors", errors);
     return res.status(422).render("auth/signup", {
       path: "/signup",
       pageTitle: "Sign Up",
-      errorMessage: errors.array(),
+      errorMessage: errors.array()[0].msg,
     });
   }
   User.findOne({ email: email })

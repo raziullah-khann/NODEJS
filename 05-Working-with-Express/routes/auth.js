@@ -9,7 +9,7 @@ router.get("/signup", authControllers.getSignup);
 
 router.post("/login", authControllers.postLogin);
 
-router.post("/signup",check("email").isEmail(), authControllers.postSignup);
+router.post("/signup",check("email").isEmail().withMessage("Please enter a valid email"), authControllers.postSignup);
 
 router.post("/logout", authControllers.postLogout);
 
