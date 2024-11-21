@@ -18,7 +18,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "session",
 });
-const csrfProtection = csrf();
+const csrfProtection = csrf(); //Create a CSRF protection middleware instance
 
 app.set("view engine", "ejs"); //Setting the View Engine => responsible for rendering dynamic HTML based on templates and data.
 app.set("views", "views"); //Setting the Views Directory =>
@@ -39,7 +39,7 @@ app.use(
     store: store,
   })
 );
-app.use(csrfProtection);// Enable CSRF protection
+app.use(csrfProtection);// Enable the CSRF protection middleware globally
 app.use(flash()); //Flash middleware must be added after session middleware
 
 app.use((req, res, next) => {
