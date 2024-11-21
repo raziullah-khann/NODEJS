@@ -86,3 +86,7 @@ button:active {
 .centered:active {
   color: rgb(233, 112, 7);
 }
+
+.form-control input.invalid{
+  border-color: red;
+}
