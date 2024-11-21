@@ -78,11 +78,11 @@ exports.getSignup = (req, res, next) => {
 };
 
 exports.postSignup = (req, res, next) => {
-  const { email, password, confirmPassword } = req.body;
+  const { email, password } = req.body;
   //one step we want to do before we create a new user, first we check user is already exist or not in my database bcs i don't want duplicate email
   const errors = validationResult(req);
   console.log("errors.array()", errors.array());
-  if(!errors.isEmpty()){
+  if (!errors.isEmpty()) {
     // console.log("errors.isEmpty()", errors.isEmpty()); //false
     console.log("errors", errors);
     return res.status(422).render("auth/signup", {
@@ -91,34 +91,25 @@ exports.postSignup = (req, res, next) => {
       errorMessage: errors.array()[0].msg,
     });
   }
-  User.findOne({ email: email })
-    .then((userDoc) => {
-      if (userDoc) {
-        req.flash("error", "E-mail exist already, please pick different one!");
-        return res.redirect("/signup");
-      }
-      return bcrypt //This is an asynchronous task and therefore it will return promise that resolve with the hashed password.
-        .hash(password, 12)
-        .then((hashPassword) => {
-          const user = new User({
-            email: email,
-            password: hashPassword,
-            cart: { items: [] },
-          });
-          return user.save();
-        })
-        .then((result) => {
-          res.redirect("/login");
-          return transporter.sendMail({
-            to: email,
-            from: "raziullahkhan25@gmail.com",
-            subject: "SignUp succeesded!",
-            html: "<h1>You Successfully signed up!</h1>",
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+
+  bcrypt //This is an asynchronous task and therefore it will return promise that resolve with the hashed password.
+    .hash(password, 12)
+    .then((hashPassword) => {
+      const user = new User({
+        email: email,
+        password: hashPassword,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+      return transporter.sendMail({
+        to: email,
+        from: "raziullahkhan25@gmail.com",
+        subject: "SignUp succeesded!",
+        html: "<h1>You Successfully signed up!</h1>",
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -183,7 +174,7 @@ exports.postReset = (req, res, next) => {
 
 exports.getNewPassword = (req, res, next) => {
   const token = req.params.token;
-  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })  //This part checks if the resetTokenExpiration timestamp is greater than the current time, meaning the token has not yet expired.
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } }) //This part checks if the resetTokenExpiration timestamp is greater than the current time, meaning the token has not yet expired.
     .then((user) => {
       let message = req.flash("error");
       if (message.length > 0) {
@@ -210,18 +201,25 @@ exports.postNewPassword = (req, res, next) => {
   const passwordToken = req.body.passwordToken;
   let resetUser;
 
-  User.findOne({resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now()}, _id: userId}).then(user =>{
-    resetUser = user;
-    return bcrypt.hash(newPassword, 12);
+  User.findOne({
+    resetToken: passwordToken,
+    resetTokenExpiration: { $gt: Date.now() },
+    _id: userId,
   })
-  .then(hashPassword => {
-    resetUser.password = hashPassword;
-    resetUser.resetToken = undefined;
-    resetUser.resetTokenExpiration = undefined;
-    return resetUser.save();
-  }).then(result => {
-    res.redirect("/login");
-  }).catch(err=> {
-    console.log(err);
-  })
-}
+    .then((user) => {
+      resetUser = user;
+      return bcrypt.hash(newPassword, 12);
+    })
+    .then((hashPassword) => {
+      resetUser.password = hashPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+      return resetUser.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
