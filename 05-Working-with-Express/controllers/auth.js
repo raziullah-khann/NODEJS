@@ -33,6 +33,16 @@ exports.getLogin = (req, res, next) => {
 //here i will set my user data and isLoggedIn
 exports.postLogin = (req, res, next) => {
   const { email, password } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log("errors", errors);
+    return res.status(422).render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
   User.findOne({ email: email }) // Assuming you're retrieving the same user
     .then((user) => {
       if (!user) {
@@ -74,11 +84,12 @@ exports.getSignup = (req, res, next) => {
     path: "/signup",
     pageTitle: "Sign Up",
     errorMessage: message,
+    oldInput: { email: "", password: "", confirmPassword: "" }
   });
 };
 
 exports.postSignup = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, confirmPassword } = req.body;
   //one step we want to do before we create a new user, first we check user is already exist or not in my database bcs i don't want duplicate email
   const errors = validationResult(req);
   console.log("errors.array()", errors.array());
@@ -89,6 +100,7 @@ exports.postSignup = (req, res, next) => {
       path: "/signup",
       pageTitle: "Sign Up",
       errorMessage: errors.array()[0].msg,
+      oldInput: { email: email, password: password, confirmPassword: confirmPassword }
     });
   }
 
