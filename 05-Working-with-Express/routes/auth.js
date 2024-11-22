@@ -8,7 +8,16 @@ router.get("/login", authControllers.getLogin);
 
 router.get("/signup", authControllers.getSignup);
 
-router.post("/login", authControllers.postLogin);
+router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Please enter a valid email"),
+    body("password", "Password has to be valid!")
+      .isLength({ min: 5 })
+      .isAlphanumeric(),
+  ],
+  authControllers.postLogin
+);
 
 router.post(
   "/signup",
@@ -21,21 +30,26 @@ router.post(
         //   throw new Error("This email address is forbidden");
         // }
         // return true;
-        return User.findOne({email: value}).then(user => {
-            if(user) {
-                return Promise.reject("E-mail exist already, please pick different one!")
-            };
-        })
+        return User.findOne({ email: value }).then((user) => {
+          if (user) {
+            return Promise.reject(
+              "E-mail exist already, please pick different one!"
+            );
+          }
+        });
       }),
-    body("password", "Please enter password only number and text atleat 5 characters.")
+    body(
+      "password",
+      "Please enter password only number and text atleat 5 characters."
+    )
       .isLength({ min: 5 })
       .isAlphanumeric(),
-    body("confirmPassword").custom((value, {req}) => {
-        if(value !== req.body.password){
-            throw new Error("Password have to match!");
-        }
-        return true;
-    })  
+    body("confirmPassword").custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Password have to match!");
+      }
+      return true;
+    }),
   ],
   authControllers.postSignup
 );
