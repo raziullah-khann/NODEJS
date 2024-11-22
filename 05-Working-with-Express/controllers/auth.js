@@ -27,6 +27,8 @@ exports.getLogin = (req, res, next) => {
     path: "/login",
     pageTitle: "Login",
     errorMessage: message,
+    oldInput: { email: "", password: "" },
+    validationErrors: [],
   });
 };
 
@@ -36,19 +38,25 @@ exports.postLogin = (req, res, next) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log("errors", errors);
+    console.log("errors", errors.array());
     return res.status(422).render("auth/login", {
       path: "/login",
       pageTitle: "Login",
       errorMessage: errors.array()[0].msg,
+      oldInput: { email: email, password: password },
+      validationErrors: errors.array(),
     });
   }
   User.findOne({ email: email }) // Assuming you're retrieving the same user
     .then((user) => {
       if (!user) {
-        //findOne() => if user entered wrong email return null
-        req.flash("error", "Invalid email or password!");
-        return res.redirect("/login");
+        return res.status(422).render("auth/login", {
+          path: "/login",
+          pageTitle: "Login",
+          errorMessage: "This email is not exist!",
+          oldInput: { email: email, password: password },
+          validationErrors: [{ path: "email" }],
+        });
       }
       bcrypt
         .compare(password, user.password) //this compare return promise taht resolves to true, if password match
@@ -61,8 +69,14 @@ exports.postLogin = (req, res, next) => {
               res.redirect("/"); //here you are done saving the session data then it will redirect
             });
           } else {
-            req.flash("error", "Invalid email or password!");
-            res.redirect("/login");
+            console.log("errors", errors.array());
+            return res.status(422).render("auth/login", {
+              path: "/login",
+              pageTitle: "Login",
+              errorMessage: "Invalid password!",
+              oldInput: { email: email, password: password },
+              validationErrors: [],
+            });
           }
         });
     })
@@ -85,7 +99,7 @@ exports.getSignup = (req, res, next) => {
     pageTitle: "Sign Up",
     errorMessage: message,
     oldInput: { email: "", password: "", confirmPassword: "" },
-    validationErrors: []
+    validationErrors: [],
   });
 };
 
@@ -101,8 +115,12 @@ exports.postSignup = (req, res, next) => {
       path: "/signup",
       pageTitle: "Sign Up",
       errorMessage: errors.array()[0].msg,
-      oldInput: { email: email, password: password, confirmPassword: confirmPassword },
-      validationErrors: errors.array()
+      oldInput: {
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+      },
+      validationErrors: errors.array(),
     });
   }
 
