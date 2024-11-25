@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -39,7 +39,7 @@ app.use(
     store: store,
   })
 );
-app.use(csrfProtection);// Enable the CSRF protection middleware globally
+app.use(csrfProtection); // Enable the CSRF protection middleware globally
 app.use(flash()); //Flash middleware must be added after session middleware
 
 app.use((req, res, next) => {
@@ -48,22 +48,28 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then((user) => {
+      if (user) {
+        return next();
+      }
       req.user = user;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch(err =>{
+      throw new Error(err);
+    });
 });
 
 // Make CSRF token available to all views
-app.use((req,res,next) => {
+app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
-})
+});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoute);
 app.use(authRoute);
+app.get("/500",pageNotFound.get500Page);
 app.use(pageNotFound.get404Page);
 
 mongoose
