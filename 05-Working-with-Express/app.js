@@ -28,6 +28,7 @@ const shopRoute = require("./routes/shop");
 const authRoute = require("./routes/auth");
 const pageNotFound = require("./controllers/error");
 
+//Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global variable in Node.js that represents the current directory path of the current module
 
@@ -48,7 +49,7 @@ app.use((req, res, next) => {
   }
   User.findById(req.session.user._id)
     .then((user) => {
-      if (user) {
+      if (!user) {
         return next();
       }
       req.user = user;
@@ -71,6 +72,9 @@ app.use(shopRoute);
 app.use(authRoute);
 app.get("/500",pageNotFound.get500Page);
 app.use(pageNotFound.get404Page);
+app.use((error, req, res, next) => {
+  res.redirect("/500");
+})
 
 mongoose
   .connect(process.env.MONGODB_URI)
