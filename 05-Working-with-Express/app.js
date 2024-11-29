@@ -43,7 +43,15 @@ app.use(
 app.use(csrfProtection); // Enable the CSRF protection middleware globally
 app.use(flash()); //Flash middleware must be added after session middleware
 
+// Make CSRF token available to all views
 app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+app.use((req, res, next) => {
+  // throw new Error("Sync Dummy!");
   if (!req.session.user) {
     return next();
   }
@@ -56,16 +64,10 @@ app.use((req, res, next) => {
       next();
     })
     .catch(err =>{
-      throw new Error(err);
+      next(new Error(err));
     });
 });
 
-// Make CSRF token available to all views
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
 
 app.use("/admin", adminRoutes);
 app.use(shopRoute);
@@ -73,7 +75,12 @@ app.use(authRoute);
 app.get("/500",pageNotFound.get500Page);
 app.use(pageNotFound.get404Page);
 app.use((error, req, res, next) => {
-  res.redirect("/500");
+  res.status(500).render("500", {
+    pageTitle: "Error!",
+    path: "/500",
+    isAuthenticated: req.session.isLoggedIn
+  });
+  // res.redirect("/500");
 })
 
 mongoose
