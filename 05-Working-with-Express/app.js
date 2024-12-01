@@ -7,6 +7,7 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -30,6 +31,7 @@ const pageNotFound = require("./controllers/error");
 
 //Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer)
 app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global variable in Node.js that represents the current directory path of the current module
 
 app.use(

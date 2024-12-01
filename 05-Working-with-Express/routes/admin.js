@@ -21,7 +21,7 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .trim(),
-    body("imageUrl", "imageUrl must require and valid url").isURL(),
+    // body("imageUrl", "imageUrl must require and valid url").isURL(),
     body("price", "price must be number").isFloat(),
     body("description", "description must require atleast 5 character")
       .isLength({ min: 5 })

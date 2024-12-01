@@ -19,7 +19,7 @@ exports.postAddProductPage = (req, res, next) => {
   // console.log(req.body);
   //i do extract my title, imageUrl, price and description and store in a constant bcs i never overwrite the value in this function
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const imageUrl = req.body.image;
   const price = req.body.price;
   const description = req.body.description;
 
