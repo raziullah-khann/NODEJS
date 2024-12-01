@@ -21,6 +21,15 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf(); //Create a CSRF protection middleware instance
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + "-" + file.originalname);
+  },
+});
+
 app.set("view engine", "ejs"); //Setting the View Engine => responsible for rendering dynamic HTML based on templates and data.
 app.set("views", "views"); //Setting the Views Directory =>
 
@@ -31,7 +40,7 @@ const pageNotFound = require("./controllers/error");
 
 //Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(multer)
+app.use(multer({ storage: fileStorage }).single("image"));
 app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global variable in Node.js that represents the current directory path of the current module
 
 app.use(
@@ -65,25 +74,24 @@ app.use((req, res, next) => {
       req.user = user;
       next();
     })
-    .catch(err =>{
+    .catch((err) => {
       next(new Error(err));
     });
 });
 
-
 app.use("/admin", adminRoutes);
 app.use(shopRoute);
 app.use(authRoute);
-app.get("/500",pageNotFound.get500Page);
+app.get("/500", pageNotFound.get500Page);
 app.use(pageNotFound.get404Page);
 app.use((error, req, res, next) => {
   res.status(500).render("500", {
     pageTitle: "Error!",
     path: "/500",
-    isAuthenticated: req.session.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn,
   });
   // res.redirect("/500");
-})
+});
 
 mongoose
   .connect(process.env.MONGODB_URI)
