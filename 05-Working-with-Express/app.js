@@ -23,13 +23,24 @@ const csrfProtection = csrf(); //Create a CSRF protection middleware instance
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "images");
+    cb(null, path.join(__dirname, "images"));
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + "-" + file.originalname);
+    cb(null, new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname);
   },
 });
 
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/png"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 app.set("view engine", "ejs"); //Setting the View Engine => responsible for rendering dynamic HTML based on templates and data.
 app.set("views", "views"); //Setting the Views Directory =>
 
@@ -40,7 +51,7 @@ const pageNotFound = require("./controllers/error");
 
 //Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(multer({ storage: fileStorage }).single("image"));
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
 app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global variable in Node.js that represents the current directory path of the current module
 
 app.use(
@@ -88,7 +99,7 @@ app.use((error, req, res, next) => {
   res.status(500).render("500", {
     pageTitle: "Error!",
     path: "/500",
-    isAuthenticated: req.session.isLoggedIn,
+    isAuthenticated: req.session ? req.session.isLoggedIn : false,
   });
   // res.redirect("/500");
 });
