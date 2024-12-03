@@ -55,7 +55,8 @@ exports.postAddProductPage = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
-  const imageUrl = image.path; // Extract and use the file path
+  const imageUrl = image.filename; // Use relative path 
+  console.log(imageUrl)
   const product = new Product({
     // _id: new mongoose.Types.ObjectId("6736193ee9f91850f79be2d0"),//create duplicate id
     title: title,
@@ -162,8 +163,8 @@ exports.postEditProduct = (req, res, next) => {
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDescription;
-      if(image){
-        product.imageUrl = image.path;
+      if (image) {
+        product.imageUrl = image.filename; // Save relative path
       }
       return product.save().then((result) => {
         console.log("Updated Product is", result);
