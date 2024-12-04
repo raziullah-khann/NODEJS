@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 const Product = require("../models/product");
 const Order = require("../models/order");
 
@@ -18,7 +21,7 @@ exports.getProducts = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 // fetch single product for product details
@@ -37,7 +40,7 @@ exports.getProduct = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 exports.getIndex = (req, res, next) => {
@@ -54,7 +57,7 @@ exports.getIndex = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 exports.getCart = (req, res, next) => {
@@ -75,7 +78,7 @@ exports.getCart = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 // add-product.ejs file me add to product button pe click krne ke baad /cart route pe req.body me product id mil jayega hidden input field me data bhej diya hai waha se
@@ -93,7 +96,7 @@ exports.postCart = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
@@ -107,7 +110,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 exports.postOrder = (req, res, next) => {
@@ -138,7 +141,7 @@ exports.postOrder = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
 
 exports.getOrders = (req, res, next) => {
@@ -155,5 +158,28 @@ exports.getOrders = (req, res, next) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
-    })
+    });
 };
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = "invoice-" + orderId + ".pdf";
+  const invoicePath = path.join(__dirname, "../data", "invoices", invoiceName);
+  console.log(invoicePath);
+  fs.readFile(invoicePath, (err, data) => {
+    if (err) {
+      console.log("File not found:", err);
+      return next(err);
+    }
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",`inline; filename="${invoiceName}"`);
+    res.send(data);
+  });
+};
+
+// res.setHeader("Content-Type", "application/pdf");
+//     res.setHeader(
+//       "Content-Disposition",
+//       `inline; filename="${invoiceName}"` // Allows the browser to display the file inline
+//     );

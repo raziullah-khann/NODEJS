@@ -30,4 +30,6 @@ router.post("/create-order", isAuth, shopControllers.postOrder);
 //if user get the orders path then it will be execute
 router.get("/orders", isAuth, shopControllers.getOrders);
 
+router.get("/orders/:orderId", isAuth, shopControllers.getInvoice);
+
 module.exports = router;
