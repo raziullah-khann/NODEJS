@@ -179,17 +179,24 @@ exports.getInvoice = (req, res, next) => {
         invoiceName
       );
       // console.log(invoicePath);
-      fs.readFile(invoicePath, (err, data) => {
-        if (err) {
-          return next(err);
-        }
-        res.setHeader("Content-Type", "application/pdf");
+      const stream = fs.createReadStream(invoicePath);
+      res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
           "Content-Disposition",
           `inline; filename="${invoiceName}"`
         );
-        res.send(data);
-      });
+      stream.pipe(res);
+    //   fs.readFile(invoicePath, (err, data) => {
+    //     if (err) {
+    //       return next(err);
+    //     }
+    //     res.setHeader("Content-Type", "application/pdf");
+    //     res.setHeader(
+    //       "Content-Disposition",
+    //       `inline; filename="${invoiceName}"`
+    //     );
+    //     res.send(data);
+    //   });
     })
     .catch((err) => {
       // console.log("error hai", err);
