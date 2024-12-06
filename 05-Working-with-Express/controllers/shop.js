@@ -180,17 +180,25 @@ exports.getInvoice = (req, res, next) => {
         "invoices",
         invoiceName
       );
-      const pdfDoc = new PDFDocument();
+      const pdfDoc = new PDFDocument(); //create a pdf
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
         `inline; filename="${invoiceName}"`
       );
-      pdfDoc.pipe(fs.createWriteStream(invoicePath));
-      pdfDoc.pipe(res);
+      pdfDoc.pipe(fs.createWriteStream(invoicePath)); //give path where we write anything
+      pdfDoc.pipe(res);  //send response piece by piece to the client
 
-      pdfDoc.text("Hello world!")
-      pdfDoc.end();
+      pdfDoc.fontSize(20).text("Invoice", {underline: true}) // actual data
+      pdfDoc.text("----------------------------------------------------------------------");
+      let totalPrice = 0;
+      order.products.forEach(prod => {
+        totalPrice += prod.quantity * prod.product.price;
+        pdfDoc.fontSize(14).text(prod.product.title + ' - ' + prod.quantity + ' x ' + ' Rs ' + prod.product.price);
+      })
+      pdfDoc.text("-----------------------");
+      pdfDoc.fontSize(20).text("Total price: Rs " + totalPrice);
+      pdfDoc.end(); // signals that no more content will be added. 
 
 
       // console.log(invoicePath);
