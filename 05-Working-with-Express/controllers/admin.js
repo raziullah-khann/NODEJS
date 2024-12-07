@@ -1,6 +1,8 @@
 const { mongoose } = require("mongoose");
 const Product = require("../models/product");
 const { validationResult } = require("express-validator");
+const fileHelper = require("../util/file");
+const path = require("path");
 
 exports.getAddProductPage = (req, res, next) => {
   // res.send('<form action="/admin/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form>');
@@ -38,7 +40,7 @@ exports.postAddProductPage = (req, res, next) => {
     });
   }
   const errors = validationResult(req);
-  
+
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
@@ -55,8 +57,9 @@ exports.postAddProductPage = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
-  const imageUrl = image.filename; // Use relative path 
-  console.log(imageUrl)
+  console.log("add krte time image object hai ",image);
+  const imageUrl = image.filename; // Use relative path
+  console.log("add krte time image filename hai ",imageUrl);
   const product = new Product({
     // _id: new mongoose.Types.ObjectId("6736193ee9f91850f79be2d0"),//create duplicate id
     title: title,
@@ -136,7 +139,7 @@ exports.postEditProduct = (req, res, next) => {
   const image = req.file;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
-  
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
@@ -164,7 +167,28 @@ exports.postEditProduct = (req, res, next) => {
       product.price = updatedPrice;
       product.description = updatedDescription;
       if (image) {
-        product.imageUrl = image.filename; // Save relative path
+        console.log("imagePath hai update karte time ka", product.imageUrl);
+      
+        // Check if product.imageUrl is undefined or null
+        if (!product.imageUrl) {
+          console.error("product.imageUrl is undefined or invalid.");
+          throw new Error("Invalid imageUrl for the product.");
+        }
+      
+        try {
+          const updatePath = path.join(__dirname, "../", "images", product.imageUrl);
+          console.log("Resolved update path:", updatePath);
+      
+          // Attempt file deletion
+          fileHelper.deleteFile(updatePath);
+          console.log("File deletion attempted for path:", updatePath);
+      
+          product.imageUrl = image.filename; // Save relative path
+        } catch (err) {
+          console.error("Error occurred in the update image logic:", err.message);
+          console.error(err.stack); // Log the stack trace for more details
+          throw err; // Trigger the main catch block
+        }
       }
       return product.save().then((result) => {
         console.log("Updated Product is", result);
@@ -172,6 +196,7 @@ exports.postEditProduct = (req, res, next) => {
       });
     })
     .catch((err) => {
+      console.log('error hai jab hum update kr rhe hai')
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -203,7 +228,16 @@ exports.getProducts = (req, res, next) => {
 //Delete product
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
-  Product.deleteOne({ _id: productId, userId: req.user._id })
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("Product not found!"));
+      }
+      const currentPath = path.join(__dirname,"../","images",product.imageUrl);
+      console.log("current path hai ",currentPath);
+      fileHelper.deleteFile(currentPath);
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
     .then(() => {
       console.log("Destroy Product!");
       res.redirect("/admin/products");
