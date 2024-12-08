@@ -172,3 +172,22 @@ a {
   text-align: center;
   text-shadow: 2px 2px 4px #000000;
 }
+
+.pagination {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.pagination a {
+  text-decoration: none;
+  color: #00695c;
+  padding: 0.5rem;
+  border: 1px solid #00695c;
+  margin: 0 1rem;
+}
+
+.pagination a:hover,
+.pagination a:hover {
+  background-color: #00695c;
+  color: white;
+}

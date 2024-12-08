@@ -6,6 +6,8 @@ const PDFDocument = require("pdfkit");
 const Product = require("../models/product");
 const Order = require("../models/order");
 
+const ITEMS_PER_PAGE = 2;
+
 // fetch all product
 exports.getProducts = (req, res, next) => {
   // console.log(adminData.Product);
@@ -46,7 +48,10 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  const page = req.query.page;
   Product.find()
+  .skip((page-1) * ITEMS_PER_PAGE)
+  .limit(ITEMS_PER_PAGE)
     .then((product) => {
       console.log(product);
       res.render("shop/index", {
@@ -56,6 +61,7 @@ exports.getIndex = (req, res, next) => {
       });
     })
     .catch((err) => {
+      console.log(err);
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
