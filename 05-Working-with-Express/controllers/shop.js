@@ -13,12 +13,28 @@ exports.getProducts = (req, res, next) => {
   // console.log(adminData.Product);
   // res.sendFile(path.join(__dirname, '..', 'views', 'shop.html'));
   // res.sendFile(path.join(rootDir, 'views', 'shop.html'));
+  const page = +req.query.page || 1;
+  let totalItems;
   Product.find()
-    .then((Product) => {
+  .countDocuments().then(numProducts => {
+    totalItems = numProducts;
+    return Product.find()
+    .skip((page-1) * ITEMS_PER_PAGE)
+    .limit(ITEMS_PER_PAGE)
+  })
+    .then((products) => {
+      console.log(products);
       res.render("shop/product-list", {
-        prods: Product,
-        pageTitle: "All Product",
+        prods: products,
+        pageTitle: "Product List",
         path: "/products",
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems, //true or false
+        hasPreviousPage: page>1, //true or false
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems/ITEMS_PER_PAGE), // Total pages
+        totalPages: Math.ceil(totalItems / ITEMS_PER_PAGE), // Number of total pages
       });
     })
     .catch((err) => {

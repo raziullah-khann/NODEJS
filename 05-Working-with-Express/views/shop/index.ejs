@@ -47,32 +47,7 @@
                         <a href="/?page=<%= lastPage %>"><%= lastPage %></a> 
                         <% } %>
                     </section> -->
-                    <section class="pagination">
-                        <!-- Previous Button -->
-                        <% if (hasPreviousPage) { %>
-                            <a href="/?page=<%= previousPage %>" class="pagination__btn">‹</a>
-                        <% } else { %>
-                            <span class="pagination__btn disabled">‹</span>
-                        <% } %>
-                    
-                        <!-- Page Numbers -->
-                        <% for (let i = 1; i <= totalPages; i++) { %>
-                            <% if (i === currentPage) { %>
-                                <span class="pagination__btn active"><%= i %></span>
-                            <% } else { %>
-                                <a href="/?page=<%= i %>" class="pagination__btn"><%= i %></a>
-                            <% } %>
-                        <% } %>
-                    
-                        <!-- Next Button -->
-                        <% if (hasNextPage) { %>
-                            <a href="/?page=<%= nextPage %>" class="pagination__btn">›</a>
-                        <% } else { %>
-                            <span class="pagination__btn disabled">›</span>
-                        <% } %>
-                    </section>
-                    
-                    
+                    <%- include('../includes/pagination.ejs', {hasPreviousPage: hasPreviousPage, previousPage: previousPage, totalPages: totalPages, currentPage: currentPage, hasNextPage: hasNextPage, nextPage: nextPage}) %>
                     <% } else { %>
                         <h1>No Product Found!</h1>
                         <% } %>
