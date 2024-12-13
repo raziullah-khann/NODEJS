@@ -149,6 +149,31 @@ exports.postCartDeleteProduct = (req, res, next) => {
     });
 };
 
+exports.getCheckout = (req, res, next) =>{
+  req.user
+    .populate("cart.items.productId") // Populate the productId with the actual Product document and returns a Promise
+    .then((user) => {
+      //here user is req.user
+      // console.log("get cart product", user.cart.items);
+      const products = user.cart.items;
+      let total = 0;
+      products.forEach(p => {
+        total += p.quantity * p.productId.price;
+      })
+      res.render("shop/checkout", {
+        path: "/checkout",
+        pageTitle: "Checkout",
+        products: products,
+        totalPrice: total,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
+
 exports.postOrder = (req, res, next) => {
   req.user
     .populate("cart.items.productId")

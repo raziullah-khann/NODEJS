@@ -24,6 +24,9 @@ router.post("/cart", isAuth, shopControllers.postCart);
 //if user click on delete button on cart page then that product deleted
 router.post("/cart-delete-item", isAuth, shopControllers.postCartDeleteProduct);
 
+//
+router.get("/checkout", isAuth, shopControllers.getCheckout);
+
 //if we click on OrderNow button in cart then execute this middleware function
 router.post("/create-order", isAuth, shopControllers.postOrder);
 
