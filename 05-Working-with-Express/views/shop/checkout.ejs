@@ -19,5 +19,20 @@
                 <div class="centered checkout">
                     <h2>Total: <%= totalPrice %></h2>
                 </div>
+                <div>
+                    <div class="centered checkout">
+                        <button id="order-btn" class=" btn">ORDER</button>
+                    </div>
+                    <script src="https://js.stripe.com/v3/"></script>
+                    <script>
+                        var stripe = Stripe("<%= Publishable_key %>");
+                        var OrderBtn = document.getElementById("order-btn");
+                        OrderBtn.addEventListener("click", () => {
+                            stripe.redirectToCheckout({
+                                sessionId: '<%= sessionId %>'
+                            })
+                        })
+                    </script>
+                </div>
             </main>
             <%- include('../includes/end.ejs') %>

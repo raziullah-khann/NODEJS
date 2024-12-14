@@ -27,8 +27,12 @@ router.post("/cart-delete-item", isAuth, shopControllers.postCartDeleteProduct);
 //
 router.get("/checkout", isAuth, shopControllers.getCheckout);
 
+router.get("/checkout/success", shopControllers.getCheckoutSuccess);
+
+router.get("/checkout/cancel", shopControllers.getCheckout);
+
 //if we click on OrderNow button in cart then execute this middleware function
-router.post("/create-order", isAuth, shopControllers.postOrder);
+// router.post("/create-order", isAuth, shopControllers.postOrder);
 
 //if user get the orders path then it will be execute
 router.get("/orders", isAuth, shopControllers.getOrders);
