@@ -51,8 +51,8 @@ const shopRoute = require("./routes/shop");
 const authRoute = require("./routes/auth");
 const pageNotFound = require("./controllers/error");
 
-app.use(helmet());
-app.use(compression());
+app.use(helmet()); //add some extra headers
+app.use(compression()); //compress size of css and js file code 
 
 //Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));
