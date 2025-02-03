@@ -73,7 +73,7 @@ exports.postAddProductPage = (req, res, next) => {
   product
     .save()
     .then((result) => {
-      console.log("Product saved successfully:", result);
+      // console.log("Product saved successfully:", result);
       console.log("Created Product");
       res.redirect("/admin/products");
     })

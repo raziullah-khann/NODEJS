@@ -1,5 +1,6 @@
 require("dotenv").config();
 const path = require("path");
+const fs = require('fs');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -10,6 +11,7 @@ const flash = require("connect-flash");
 const multer = require("multer");
 const helmet = require('helmet');
 const compression = require('compression');
+const morgan = require('morgan');
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -51,8 +53,11 @@ const shopRoute = require("./routes/shop");
 const authRoute = require("./routes/auth");
 const pageNotFound = require("./controllers/error");
 
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
+
 app.use(helmet()); //add some extra headers
 app.use(compression()); //compress size of css and js file code 
+app.use(morgan('combined', {stream: accessLogStream})); //how to log data manage
 
 //Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));

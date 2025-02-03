@@ -31,7 +31,7 @@ exports.getProducts = (req, res, next) => {
         .limit(ITEMS_PER_PAGE);
     })
     .then((products) => {
-      console.log(products);
+      // console.log(products);
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "Product List",
@@ -57,7 +57,7 @@ exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
   Product.findOne({ _id: prodId })
     .then((product) => {
-      console.log("single Product", product);
+      // console.log("single Product", product);
       res.render("shop/product-detail", {
         product: product,
         pageTitle: "Product-Detail",
@@ -83,7 +83,7 @@ exports.getIndex = (req, res, next) => {
         .limit(ITEMS_PER_PAGE);
     })
     .then((products) => {
-      console.log(products);
+      // console.log(products);
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
@@ -134,7 +134,7 @@ exports.postCart = (req, res, next) => {
       return req.user.addToCart(product); //here addTocart return promise
     })
     .then((result) => {
-      console.log(result);
+      // console.log(result);
       res.redirect("/cart");
     })
     .catch((err) => {
