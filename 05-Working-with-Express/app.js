@@ -8,6 +8,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
 const multer = require("multer");
+const helmet = require('helmet');
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -48,6 +49,8 @@ const adminRoutes = require("./routes/admin");
 const shopRoute = require("./routes/shop");
 const authRoute = require("./routes/auth");
 const pageNotFound = require("./controllers/error");
+
+app.use(helmet());
 
 //Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));
