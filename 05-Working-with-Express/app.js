@@ -55,7 +55,20 @@ const pageNotFound = require("./controllers/error");
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 
-app.use(helmet()); //add some extra headers
+// app.use(helmet()); //add some extra headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
+        styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles
+        connectSrc: ["'self'", "https://api.blocksly.org"], // ✅ Allow API requests
+      },
+    },
+  })
+);
+
 app.use(compression()); //compress size of css and js file code 
 app.use(morgan('combined', {stream: accessLogStream})); //how to log data manage
 

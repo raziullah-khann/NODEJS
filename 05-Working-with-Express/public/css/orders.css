@@ -9,12 +9,22 @@
   font-size: 1rem;
 }
 
-.orders__item {
+/* .orders__item {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   padding: 1rem;
   margin-bottom: 1rem;
   width:100%;
+} */
+.orders__item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  width: 100%; /* Ensure it fits inside the parent*/
+  max-width: 100%; /* Prevents it from exceeding screen width */
+  box-sizing: border-box; /* Ensures padding doesn't add extra width */
+  overflow-x: auto; /* Allows scrolling within the element if needed */
 }
+
 
 .orders__products {
   list-style: none;

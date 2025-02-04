@@ -30,7 +30,11 @@
                                         <input type="hidden" name="productId", value="<%= product._id %>">
                                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                         <!-- i will listen to a click to this button and then i will gather the product id and csrftoken manually through the help of client side js -->
-                                        <button class="btn" type="button" onClick="deleteProduct(this)">Delete</button> 
+                                        <!-- <button class="btn" type="button" onClick="deleteProduct(this)">Delete</button>  -->
+                                        <button class="btn delete-btn" data-product-id="<%= product._id %>" data-csrf="<%= csrfToken %>">
+                                            Delete
+                                        </button>
+                                        
                                     <!-- </form> -->
                                 </div> 
                             </article>
