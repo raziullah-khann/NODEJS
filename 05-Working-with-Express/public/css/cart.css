@@ -18,6 +18,7 @@
   padding: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   margin-bottom: 1rem;
+  border-radius: 1rem;
 }
 
 .cart__item h1,
@@ -30,3 +31,22 @@
 .centered.checkout{
   text-align: center;
 }
+
+@media (max-width: 768px) {
+  .cart__item {
+    flex-direction: column; /* Stack items vertically */
+    text-align: center; /* Center-align text */
+  }
+
+  .cart__item h1,
+  .cart__item h2 {
+    margin-bottom: 0.5rem; /* Add spacing between elements */
+  }
+
+  .cart__item form {
+    width: 100%; /* Ensure the form takes full width */
+    display: flex;
+    justify-content: center;
+  }
+}
+

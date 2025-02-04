@@ -49,7 +49,6 @@ exports.postAddProductPage = (req, res, next) => {
       hasError: true,
       product: {
         title: title,
-        imageUrl: imageUrl,
         price: price,
         description: description,
       },
@@ -57,8 +56,8 @@ exports.postAddProductPage = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
+  let imageUrl = image.filename; // Retrieve stored image from hidden input
   console.log("add krte time image object hai ",image);
-  const imageUrl = image.filename; // Use relative path
   console.log("add krte time image filename hai ",imageUrl);
   const product = new Product({
     // _id: new mongoose.Types.ObjectId("6736193ee9f91850f79be2d0"),//create duplicate id

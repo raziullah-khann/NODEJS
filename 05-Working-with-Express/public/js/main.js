@@ -1,16 +1,23 @@
-const backdrop = document.querySelector('.backdrop');
-const sideDrawer = document.querySelector('.mobile-nav');
-const menuToggle = document.querySelector('#side-menu-toggle');
+document.addEventListener("DOMContentLoaded", function () {
+  const backdrop = document.querySelector(".backdrop");
+  const sideDrawer = document.querySelector(".mobile-nav");
+  const menuToggle = document.querySelector("#side-menu-toggle");
 
-function backdropClickHandler() {
-  backdrop.style.display = 'none';
-  sideDrawer.classList.remove('open');
-}
+  if (!menuToggle) {
+    console.error("Hamburger menu button not found in the DOM.");
+    return;
+  }
 
-function menuToggleClickHandler() {
-  backdrop.style.display = 'block';
-  sideDrawer.classList.add('open');
-}
+  function openMenu() {
+    backdrop.style.display = "block";
+    sideDrawer.classList.add("open");
+  }
 
-backdrop.addEventListener('click', backdropClickHandler);
-menuToggle.addEventListener('click', menuToggleClickHandler);
+  function closeMenu() {
+    backdrop.style.display = "none";
+    sideDrawer.classList.remove("open");
+  }
+
+  menuToggle.addEventListener("click", openMenu);
+  backdrop.addEventListener("click", closeMenu);
+});

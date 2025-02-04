@@ -52,7 +52,7 @@ router.post(
 
 // router.post("/delete-product", isAuth, adminControllers.postDeleteProduct);
 
-router.delete("/product/:productId", isAuth, adminControllers.deleteProduct);
+router.delete("/delete-product/:productId", isAuth, adminControllers.deleteProduct);
 
 // exports.routes = router;
 // exports.products = products;
