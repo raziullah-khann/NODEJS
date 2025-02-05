@@ -3,3 +3,7 @@
 images/*
 nodemon.json
 access.log
+server.key
+server.cert
+**/server.key
+**/server.cert
