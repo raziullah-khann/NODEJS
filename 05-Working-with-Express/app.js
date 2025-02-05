@@ -1,6 +1,7 @@
 require("dotenv").config();
 const path = require("path");
 const fs = require('fs');
+const https = require('https');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -24,6 +25,9 @@ const store = new MongoDBStore({
   collection: "session",
 });
 const csrfProtection = csrf(); //Create a CSRF protection middleware instance
+
+const privateKey = fs.readFileSync('server.key');
+const certificate = fs.readFileSync('server.cert');
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -134,6 +138,9 @@ mongoose
   .then((result) => {
     console.log("Connected to MongoDB");
     app.listen(3000);
+    // https.createServer({key: privateKey, cert: certificate}, app).listen(3000, () => {
+    //   console.log("Secure server running on https://localhost:3000");
+    // });
   })
   .catch((err) => {
     console.log(err);
