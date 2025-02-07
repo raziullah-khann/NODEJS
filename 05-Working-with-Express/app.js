@@ -26,8 +26,13 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf(); //Create a CSRF protection middleware instance
 
-const privateKey = fs.readFileSync('server.key');
-const certificate = fs.readFileSync('server.cert');
+let privateKey, certificate;
+
+if (fs.existsSync("server.key") && fs.existsSync("server.cert")) {
+  privateKey = fs.readFileSync("server.key");
+  certificate = fs.readFileSync("server.cert");
+}
+
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
