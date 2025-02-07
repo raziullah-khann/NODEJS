@@ -16,6 +16,8 @@ const morgan = require('morgan');
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
+const PORT = process.env.PORT || 3000;
+
 const User = require("./models/user");
 
 const app = express(); //initialize express
@@ -142,7 +144,9 @@ mongoose
   .connect(process.env.MONGODB_URI)
   .then((result) => {
     console.log("Connected to MongoDB");
-    app.listen(3000);
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
     // https.createServer({key: privateKey, cert: certificate}, app).listen(3000, () => {
     //   console.log("Secure server running on https://localhost:3000");
     // });
