@@ -1,9 +1,8 @@
-const path = require("path"); //it provide the utilities for working with file and directory paths.
 const express = require("express");
-const rootDir = require("../util/path");
 const adminControllers = require("../controllers/admin");
 const isAuth = require("../middleware/is-auth");
 const { body } = require("express-validator");
+const { upload } = require("../util/cloudinary-config"); // Import Multer setup for Cloudinary
 
 const router = express.Router(); //This Router is like a mini express app tied to the other express app or pluggable into other express app.
 
@@ -16,6 +15,8 @@ router.get("/products", isAuth, adminControllers.getProducts);
 // /admin/product => POST,  to get the req.body of add-product body
 router.post(
   "/add-product",
+  upload.single("image"), // Use Multer middleware for image uploads
+  isAuth,
   [
     body("title", "Title must be atleast 3 character")
       .isString()
@@ -27,7 +28,6 @@ router.post(
       .isLength({ min: 5 })
       .trim(),
   ],
-  isAuth,
   adminControllers.postAddProductPage
 );
 
@@ -36,6 +36,7 @@ router.get("/edit-product/:productId", isAuth, adminControllers.getEditProduct);
 // /admin/edit-product => POST,  to get the req.body of edit-product body
 router.post(
   "/edit-product",
+  upload.single("image"), // Optional image update
   [
     body("title", "Title must be atleast 3 character")
       .isString()

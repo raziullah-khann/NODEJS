@@ -1,17 +1,18 @@
 require("dotenv").config();
 const path = require("path");
 const fs = require('fs');
+const https = require('https');
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
-// const csrf = require("csurf");
+const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
-
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -24,12 +25,37 @@ const app = express(); //initialize express
 const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "session",
-  expires: 1000 * 60 * 60 * 24, // 1 day
-  autoRemove: "interval",
-  autoRemoveInterval: 10, // Every 10 minutes
+});
+const csrfProtection = csrf(); //Create a CSRF protection middleware instance
+
+let privateKey, certificate;
+
+if (fs.existsSync("server.key") && fs.existsSync("server.cert")) {
+  privateKey = fs.readFileSync("server.key");
+  certificate = fs.readFileSync("server.cert");
+}
+
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "images"));
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname);
+  },
 });
 
-
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/png"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 app.set("view engine", "ejs"); //Setting the View Engine => responsible for rendering dynamic HTML based on templates and data.
 app.set("views", "views"); //Setting the Views Directory =>
 
@@ -46,16 +72,9 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'",
-          "'unsafe-inline'", // Allows inline scripts
-          "https://js.stripe.com",
-          "https://m.stripe.network", // ✅ Required for Stripe
-        ],
+        scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
         styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles
-        imgSrc: ["'self'", "https://res.cloudinary.com"], // Allow Cloudinary images
-        connectSrc: ["'self'", "https://api.blocksly.org", "https://api.stripe.com"], // ✅ Required for Stripe API calls
-        frameSrc: ["'self'", "https://js.stripe.com"], // ✅ Required for Stripe checkout
+        connectSrc: ["'self'", "https://api.blocksly.org"], // ✅ Allow API requests
       },
     },
   })
@@ -66,8 +85,9 @@ app.use(morgan('combined', {stream: accessLogStream})); //how to log data manage
 
 //Both are built-in middleware
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json()); // For handling JSON requests
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
 app.use(express.static(path.join(__dirname, "public"))); //__dirname is a global variable in Node.js that represents the current directory path of the current module
+app.use(express.static(path.join(__dirname, "images")));
 
 app.use(
   session({
@@ -77,14 +97,13 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection); // Enable the CSRF protection middleware globally
 app.use(flash()); //Flash middleware must be added after session middleware
-// const csrfProtection = csrf(); //Create a CSRF protection middleware instance
-// app.use(csrfProtection); // Enable the CSRF protection middleware globally
 
 // Make CSRF token available to all views
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
-  // res.locals.csrfToken = req.csrfToken();
+  res.locals.csrfToken = req.csrfToken();
   next();
 });
 
@@ -118,6 +137,7 @@ app.use((error, req, res, next) => {
     path: "/500",
     isAuthenticated: req.session ? req.session.isLoggedIn : false,
   });
+  // res.redirect("/500");
 });
 
 mongoose
@@ -127,8 +147,10 @@ mongoose
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
+    // https.createServer({key: privateKey, cert: certificate}, app).listen(3000, () => {
+    //   console.log("Secure server running on https://localhost:3000");
+    // });
   })
   .catch((err) => {
     console.log(err);
   });
-  
