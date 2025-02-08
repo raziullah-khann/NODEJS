@@ -1,7 +1,7 @@
 const { mongoose } = require("mongoose");
 const Product = require("../models/product");
 const { validationResult } = require("express-validator");
-const fileHelper = require("../util/file");
+const { cloudinary } = require("../util/cloudinary-config"); // Import Cloudinary
 const path = require("path");
 
 exports.getAddProductPage = (req, res, next) => {
@@ -17,7 +17,7 @@ exports.getAddProductPage = (req, res, next) => {
   });
 };
 
-exports.postAddProductPage = (req, res, next) => {
+exports.postAddProductPage = async (req, res, next) => {
   //i do extract my title, imageUrl, price and description and store in a constant bcs i never overwrite the value in this function
   const title = req.body.title;
   const image = req.file;
@@ -56,15 +56,20 @@ exports.postAddProductPage = (req, res, next) => {
       validationErrors: errors.array(),
     });
   }
-  let imageUrl = image.filename; // Retrieve stored image from hidden input
-  console.log("add krte time image object hai ",image);
-  console.log("add krte time image filename hai ",imageUrl);
+  // let imageUrl = image.filename;
+  console.log("add krte time image object hai ", image);
+  // console.log("add krte time image filename hai ",imageUrl);
+  // Upload image to Cloudinary
+  const result = await cloudinary.uploader.upload(image.path, {
+    folder: "ecommerce",
+  });
   const product = new Product({
     // _id: new mongoose.Types.ObjectId("6736193ee9f91850f79be2d0"),//create duplicate id
     title: title,
     price: price,
     description: description,
-    imageUrl: imageUrl,
+    imageUrl: result.secure_url, // Store Cloudinary URL
+    imagePublicId: result.public_id, // Store public_id for deletion
     userId: req.user._id,
   });
   // Product.create({
@@ -132,10 +137,10 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 //post updateProduct
-exports.postEditProduct = (req, res, next) => {
+exports.postEditProduct = async (req, res, next) => {
   const productId = req.body.productId;
   const updatedTitle = req.body.title;
-  const image = req.file;
+  const image = req.file; // New image (if uploaded)
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
 
@@ -157,49 +162,42 @@ exports.postEditProduct = (req, res, next) => {
     });
   }
 
-  Product.findById(productId)
-    .then((product) => {
-      if (product.userId.toString() !== req.user._id.toString()) {
-        return res.redirect("/");
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.redirect("/admin/products");
+    }
+
+    if (product.userId.toString() !== req.user._id.toString()) {
+      return res.redirect("/");
+    }
+
+    product.title = updatedTitle;
+    product.price = updatedPrice;
+    product.description = updatedDescription;
+    if (image) {
+      // ✅ If an old image exists, delete it from Cloudinary
+      if (product.imagePublicId) {
+        await cloudinary.uploader.destroy(product.imagePublicId);
       }
-      product.title = updatedTitle;
-      product.price = updatedPrice;
-      product.description = updatedDescription;
-      if (image) {
-        console.log("imagePath hai update karte time ka", product.imageUrl);
-      
-        // Check if product.imageUrl is undefined or null
-        if (!product.imageUrl) {
-          console.error("product.imageUrl is undefined or invalid.");
-          throw new Error("Invalid imageUrl for the product.");
-        }
-      
-        try {
-          const updatePath = path.join(__dirname, "../", "images", product.imageUrl);
-          console.log("Resolved update path:", updatePath);
-      
-          // Attempt file deletion
-          fileHelper.deleteFile(updatePath);
-          console.log("File deletion attempted for path:", updatePath);
-      
-          product.imageUrl = image.filename; // Save relative path
-        } catch (err) {
-          console.error("Error occurred in the update image logic:", err.message);
-          console.error(err.stack); // Log the stack trace for more details
-          throw err; // Trigger the main catch block
-        }
-      }
-      return product.save().then((result) => {
-        console.log("Updated Product is", result);
-        res.redirect("/admin/products");
+
+      // ✅ Upload the new image to Cloudinary
+      const result = await cloudinary.uploader.upload(image.path, {
+        folder: "ecommerce",
       });
-    })
-    .catch((err) => {
-      console.log('error hai jab hum update kr rhe hai')
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
+
+      product.imageUrl = result.secure_url; // ✅ Update with new Cloudinary URL
+      product.imagePublicId = result.public_id; // ✅ Store new Cloudinary Public ID
+    }
+    await product.save();
+    console.log("Updated Product", product);
+    res.redirect("/admin/products");
+  } catch (err) {
+    console.log("error hai jab hum update kr rhe hai");
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 };
 
 //get admin product
@@ -225,28 +223,26 @@ exports.getProducts = (req, res, next) => {
 };
 
 //Delete product
-exports.deleteProduct = (req, res, next) => {
+exports.deleteProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  Product.findById(productId)
-    .then((product) => {
-      if (!product) {
-        return next(new Error("Product not found!"));
-      }
-      const currentPath = path.join(__dirname,"../","images",product.imageUrl);
-      console.log("current path hai ",currentPath);
-      fileHelper.deleteFile(currentPath);
-      return Product.deleteOne({ _id: productId, userId: req.user._id });
-    })
-    .then(() => {
-      console.log("Destroy Product!");
-      res.status(200).json({message: 'Success!'});
-      // res.redirect("/admin/products");
-    })
-    .catch((err) => {
-      // const error = new Error(err);
-      // error.httpStatusCode = 500;
-      // return next(error);
-      res.status(200).json({message: 'Deleting product failed.'});
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      return next(new Error("Product not found!"));
+    }
 
-    });
+    if (product.userId.toString() !== req.user._id.toString()) {
+      return res.redirect("/");
+    }
+
+    if (product.imagePublicId) {
+      await cloudinary.uploader.destroy(product.imagePublicId);
+    }
+
+    await Product.deleteOne({ _id: productId, userId: req.user._id });
+    console.log("Destroy Product!");
+    res.status(200).json({ message: "Success!" });
+  } catch (err) {
+    res.status(200).json({ message: "Deleting product failed." });
+  }
 };
