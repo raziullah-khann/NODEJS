@@ -40,26 +40,41 @@ const pageNotFound = require("./controllers/error");
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'});
 
-// app.use(helmet()); //add some extra headers
+app.use(helmet()); //add some extra headers
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
+        defaultSrc: ["'self'", "https://nodejs-3-ddnt.onrender.com"], // Allow your Render app
         scriptSrc: [
           "'self'",
           "'unsafe-inline'", // Allows inline scripts
           "https://js.stripe.com",
-          "https://m.stripe.network", // ✅ Required for Stripe
+          "https://m.stripe.network",
+          "https://nodejs-3-ddnt.onrender.com", // Allow Render scripts
         ],
         styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles
-        imgSrc: ["'self'", "https://res.cloudinary.com"], // Allow Cloudinary images
-        connectSrc: ["'self'", "https://api.blocksly.org", "https://api.stripe.com"], // ✅ Required for Stripe API calls
-        frameSrc: ["'self'", "https://js.stripe.com"], // ✅ Required for Stripe checkout
+        imgSrc: [
+          "'self'",
+          "https://res.cloudinary.com", // Allow Cloudinary images
+          "https://nodejs-3-ddnt.onrender.com", // Allow images from Render
+        ],
+        connectSrc: [
+          "'self'",
+          "https://api.blocksly.org",
+          "https://api.stripe.com",
+          "https://nodejs-3-ddnt.onrender.com", // Allow API requests to your Render app
+        ],
+        frameSrc: [
+          "'self'",
+          "https://js.stripe.com", // Required for Stripe checkout
+          "https://nodejs-3-ddnt.onrender.com", // Allow embedding frames from Render
+        ],
       },
     },
   })
 );
+
 
 app.use(compression()); //compress size of css and js file code 
 app.use(morgan('combined', {stream: accessLogStream})); //how to log data manage
