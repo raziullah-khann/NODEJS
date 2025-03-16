@@ -35,7 +35,7 @@
                                 <label for="price">Price</label>
                                 <input class="<%= validationErrors.find(e => e.path === 'price') ? 'invalid' : '' %>"
                                     type="number" name="price" id="price" step="0.01"
-                                    value="<%= editing ? product.price : hasError ? product.price : '' %>">
+                                    value="<%= editing ? product.price : hasError ? product.price : '' %>" placeholder="Price must be a number and at least ₹50">
                             </div>
                             <div class="form-control">
                                 <label for="description">Description</label>
