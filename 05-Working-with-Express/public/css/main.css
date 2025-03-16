@@ -218,6 +218,10 @@ main {
   margin-bottom: 1rem;
 }
 
+.admin__title{
+  text-align: center;
+}
+
 .card {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
 }
@@ -239,7 +243,10 @@ main {
 }
 
 .card__image img {
-  width: 100%;
+  width: 100%;  /* Makes the image responsive */
+  height: 200px; /* Set a fixed height */
+  object-fit: cover; /* Crop the image to fit */
+  border-radius: 8px; /* Optional: Rounded corners */
 }
 
 .card__actions {

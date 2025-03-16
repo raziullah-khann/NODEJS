@@ -24,23 +24,8 @@ exports.postAddProductPage = async (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
 
-  if (!image) {
-    return res.status(422).render("admin/edit-product", {
-      pageTitle: "Add Product",
-      path: "/admin/add-product",
-      editing: false,
-      hasError: true,
-      product: {
-        title: title,
-        price: price,
-        description: description,
-      },
-      errorMessage: "Attached file is not an image!",
-      validationErrors: [],
-    });
-  }
   const errors = validationResult(req);
-
+  
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
@@ -54,6 +39,21 @@ exports.postAddProductPage = async (req, res, next) => {
       },
       errorMessage: errors.array()[0].msg,
       validationErrors: errors.array(),
+    });
+  }
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+      },
+      errorMessage: "Attached file is not an image!",
+      validationErrors: [],
     });
   }
   // let imageUrl = image.filename;

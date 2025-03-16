@@ -23,7 +23,7 @@ router.post(
       .isLength({ min: 3 })
       .trim(),
     // body("imageUrl", "imageUrl must require and valid url").isURL(),
-    body("price", "price must be number").isFloat(),
+    body("price", "Price must be a number and at least ₹50").isFloat({min: 50}),
     body("description", "description must require atleast 5 character")
       .isLength({ min: 5 })
       .trim(),
@@ -42,7 +42,7 @@ router.post(
       .isString()
       .isLength({ min: 3 })
       .trim(),
-    body("price", "price must be number").isFloat(),
+    body("price", "Price must be a number and at least ₹50").isFloat({min: 50}),
     body("description", "description must require atleast 5 character")
       .isLength({ min: 5 })
       .trim(),
