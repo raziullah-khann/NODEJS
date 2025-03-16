@@ -99,6 +99,7 @@ app.use(flash()); //Flash middleware must be added after session middleware
 // Make CSRF token available to all views
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.isAdmin = req.session.isAdmin; // ✅ Pass isAdmin to views
   // res.locals.csrfToken = req.csrfToken();
   next();
 });
