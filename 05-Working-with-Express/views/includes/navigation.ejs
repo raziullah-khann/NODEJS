@@ -16,6 +16,7 @@
                 <li class="main-header-item">
                     <a href="/orders" class="<%= path === '/orders' ? 'active' : '' %>">Orders</a>
                 </li>
+                <% if(isAdmin){ %>
                 <li class="main-header-item">
                     <a href="/admin/add-product" class="<%= path === '/admin/add-product' ? 'active' : '' %>">Add
                         Products</a>
@@ -24,6 +25,7 @@
                     <a href="/admin/products" class="<%= path === '/admin/products' ? 'active' : '' %>">Admin
                         Products</a>
                 </li>
+                <% } %>
                 <% } %>
         </ul>
         <ul class="main-header-list-item">

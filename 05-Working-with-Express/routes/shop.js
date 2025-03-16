@@ -1,12 +1,13 @@
 const express = require("express");
 const path = require("path"); //it provide the utilities for working with file and directory paths.
 const shopControllers = require('../controllers/shop');
-const isAuth = require('../middleware/is-auth');
+const { isAuth } = require('../middleware/is-auth');
 
 //create router object
 const router = express.Router(); //this is mini express app tied to the other express app
 
 // next(); //Allow the request to continue to the next middleware in line
+//Home page
 router.get("/", shopControllers.getIndex);
 
 //get product list
@@ -27,9 +28,9 @@ router.post("/cart-delete-item", isAuth, shopControllers.postCartDeleteProduct);
 //
 router.get("/checkout", isAuth, shopControllers.getCheckout);
 
-router.get("/checkout/success", shopControllers.getCheckoutSuccess);
+router.get("/checkout/success", isAuth, shopControllers.getCheckoutSuccess);
 
-router.get("/checkout/cancel", shopControllers.getCheckout);
+router.get("/checkout/cancel", isAuth, shopControllers.getCheckout);
 
 //if we click on OrderNow button in cart then execute this middleware function
 // router.post("/create-order", isAuth, shopControllers.postOrder);

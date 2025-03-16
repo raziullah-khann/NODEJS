@@ -62,8 +62,12 @@ exports.postLogin = (req, res, next) => {
         .compare(password, user.password) //this compare return promise taht resolves to true, if password match
         .then((doMatch) => {
           if (doMatch) {
+            // Load the admin emails list from the environment variable
+            const adminEmails = process.env.ADMINS.split(",");
             req.session.isLoggedIn = true; //This line sets a isLoggedIn property in the session object to true. This indicates that the user is now authenticated and logged in.
             req.session.user = user; //The entire user object is stored in the session.
+            // req.session.isAdmin = user.email === "admin@gmail.com"; // ✅ Dynamically check admin status
+            req.session.isAdmin = adminEmails.includes(user.email);
             return req.session.save((err) => {
               console.log(err);
               res.redirect("/"); //here you are done saving the session data then it will redirect
