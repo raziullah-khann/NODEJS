@@ -40,4 +40,22 @@ router.get("/orders", isAuth, shopControllers.getOrders);
 
 router.get("/orders/:orderId", isAuth, shopControllers.getInvoice);
 
+router.post('/subscribe', (req, res) => {
+    const email = req.body.email;
+    if (!email) {
+        return res.status(400).send(`
+            <div style="color: red; font-size: 18px; font-weight: bold; text-align: center;">
+                Email is required!
+            </div>
+        `);
+    }
+    
+    // Simulating a successful subscription (replace with database logic)
+    res.send(`
+        <div style="color: green; font-size: 18px; font-weight: bold; text-align: center;">
+            Subscription successful!
+        </div>
+    `);
+});
+
 module.exports = router;

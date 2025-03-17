@@ -1,0 +1,42 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f8d7da;
+  color: #721c24;
+  margin: 0;
+}
+
+.container__admin__restriction {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  margin-top: 4rem;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 50px;
+}
+
+p {
+  font-size: 20px;
+}
+
+a {
+  display: inline-block;
+  padding: 10px 20px;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.hmpage{
+    background-color: #5c1218;
+}
+
+a:hover {
+  background-color: #5c1218;
+}

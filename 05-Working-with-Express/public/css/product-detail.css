@@ -1,12 +1,19 @@
 .centered{
     display: block;
     text-align: center;
+    padding: 1rem;
 }
 
 .image{
-  height: 20rem;
+  height: auto;
+  max-width: 100%; /* Ensure it doesn’t overflow */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .image img{
-  height: 100%;
+  max-width: 100%; /* Make sure it fits within the container */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: contain; /* Ensure the full image is visible */
 }
 

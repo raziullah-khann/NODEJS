@@ -5,7 +5,7 @@
     <%- include('../includes/navigation.ejs') %>
         <main>
             <% if(orders.length <= 0){ %>
-            <h1>Nothing there!</h1>
+            <h1 class="order__empty">Nothing there!</h1>
             <% } else{ %>
                 <ul class="orders">
                     <% orders.map(order => { %>
@@ -21,5 +21,6 @@
                 </ul>
                 <%}%>
         </main>
+        <%- include('../includes/footer.ejs') %>
     <%- include('../includes/end.ejs') %>
  
