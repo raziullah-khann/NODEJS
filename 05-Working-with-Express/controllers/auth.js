@@ -172,6 +172,8 @@ exports.getReset = (req, res, next) => {
     path: "/reset",
     pageTitle: "Reset Password",
     errorMessage: message,
+    oldInput: { email: ""},
+    validationErrors: [],
   });
 };
 
