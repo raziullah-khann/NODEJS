@@ -176,6 +176,22 @@ exports.getReset = (req, res, next) => {
 };
 
 exports.postReset = (req, res, next) => {
+  //here handle server-side validation
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    // console.log("errors.isEmpty()", errors.isEmpty()); //false
+    console.log("errors", errors);
+    return res.status(422).render("auth/reset", {
+      path: "/reset",
+      pageTitle: "Reset",
+      errorMessage: errors.array()[0].msg, // Show the first error message
+      oldInput: {
+        email: req.body.email,
+      },
+      validationErrors: errors.array(), // Pass all errors to the view for adding invalid class
+    });
+  }
+
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
